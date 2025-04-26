@@ -1,0 +1,25 @@
+//HEder
+
+#include "minishell.h"
+
+int	open_file(char *filename, int in_out)
+{
+	int	x;
+
+	x = 0 ;
+	if (in_out == 0)
+		x = open(filename, O_RDONLY);
+	if (x < 0)
+	{
+		perror("Error");
+		exit(1);
+	}
+	if (in_out == 1)
+		x = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	if (x < 0)
+	{
+		perror("Error");
+		exit(1);
+	}
+	return (x);
+}

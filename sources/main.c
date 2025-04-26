@@ -12,16 +12,22 @@
 
 #include "minishell.h"
 
-int	main(void)
+int	main(int ac, char **argc, char **env)
 {
 	char	*line;
+	char	**allwords;
 
+	ft_split(argc[0], ' ');
 	while (1)
 	{
 		line = readline("minishell > ");
-		printf("%s %d \n", line, odd_split_num(line));
+		allwords = ft_split(line, ' ');
+		if (get_path(allwords[0], env) == NULL)
+			err("command not found: ", allwords[0], 127);
+		printf("%s \n", line);
 		free(line);
 	}
+	ac++;
 	return (0);
 }
 
