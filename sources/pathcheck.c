@@ -56,7 +56,10 @@ char	*get_path(char *cmd, char **env)
 		exec = ft_strjoin(path_part, s_cmd[0]);
 		free(path_part);
 		if (access(exec, F_OK | X_OK) == 0)
+		{
+			free(exec);
 			return (free_all(allpath), free_all(s_cmd), exec);
+		}
 		i++;
 		free(exec);
 	}

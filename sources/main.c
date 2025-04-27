@@ -16,18 +16,21 @@ int	main(int ac, char **argc, char **env)
 {
 	char	*line;
 	char	**allwords;
+	char	*path;
 
-	ft_split(argc[0], ' ');
+	printf("argc kullanma satiri: %s \n", argc[0]); // kullanilmiyor kaldir.
+	ac++; // ac kullanilmiyor kaldir.
 	while (1)
 	{
 		line = readline("minishell > ");
 		allwords = ft_split(line, ' ');
-		if (get_path(allwords[0], env) == NULL)
+		path = get_path(allwords[0], env);
+		if (path == NULL)
 			err("command not found: ", allwords[0], 127);
-		printf("%s \n", line);
+		printf("%s \n %s:path \n", line, path);
+		free_all(allwords);
 		free(line);
 	}
-	ac++;
 	return (0);
 }
 
