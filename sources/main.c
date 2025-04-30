@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: raydogmu <raydogmu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: beinan <beinan@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 15:02:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/04/23 16:54:58 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/04/30 19:10:52 by beinan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ int	main(int ac, char **argc, char **env)
 {
 	char	*line;
 	char	**allwords;
-	char	*path;
 
 	printf("argc kullanma satiri: %s \n", argc[0]); // kullanilmiyor kaldir.
 	ac++; // ac kullanilmiyor kaldir.
@@ -24,10 +23,10 @@ int	main(int ac, char **argc, char **env)
 	{
 		line = readline("minishell > ");
 		allwords = ft_split(line, ' ');
-		path = get_path(allwords[0], env);
-		if (path == NULL)
-			err("command not found: ", allwords[0], 127);
-		printf("%s \n %s:path \n", line, path);
+		int pid = fork();
+		if (pid == 0)
+			exec(allwords[0], env);
+		waitpid(-1, NULL, 0);
 		free_all(allwords);
 		free(line);
 	}
