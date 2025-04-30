@@ -6,11 +6,9 @@
 /*   By: beinan <beinan@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 17:41:00 by beinan            #+#    #+#             */
-/*   Updated: 2025/04/30 19:14:51 by beinan           ###   ########.fr       */
+/*   Updated: 2025/04/30 20:22:47 by beinan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-//HEADER EKLE!!
 
 #include "minishell.h"
 
