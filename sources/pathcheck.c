@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pathcheck.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: beinan <beinan@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/30 17:41:00 by beinan            #+#    #+#             */
+/*   Updated: 2025/04/30 19:14:51 by beinan           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 //HEADER EKLE!!
 
 #include "minishell.h"
@@ -57,7 +69,6 @@ char	*get_path(char *cmd, char **env)
 		free(path_part);
 		if (access(exec, F_OK | X_OK) == 0)
 		{
-			free(exec);
 			return (free_all(allpath), free_all(s_cmd), exec);
 		}
 		i++;
@@ -67,7 +78,7 @@ char	*get_path(char *cmd, char **env)
 	free_all(s_cmd);
 	return (NULL);
 }
-/*
+
 void	exec(char *cmd, char **env)
 {
 	char	**s_cmd;
@@ -85,7 +96,7 @@ void	exec(char *cmd, char **env)
 		}
 	}
 	path = get_path(s_cmd[0], env);
-	if (path == 0)
+	if (path == NULL)
 	{
 		free_all(s_cmd);
 		err("command not found: ", cmd, 127);
@@ -96,5 +107,3 @@ void	exec(char *cmd, char **env)
 		err("command not found: ", cmd, 127);
 	}
 }
-
-*/

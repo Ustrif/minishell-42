@@ -20,6 +20,17 @@
 # include <readline/readline.h>
 # include <unistd.h>
 # include <fcntl.h>
+# include <sys/wait.h>
+
+typedef struct s_flags
+{
+    int forw_hdoc;
+    int back_hdoc;
+    int in_redir;
+    int out_redir;
+    int pipe;
+
+}   t_flags;
 
 void	err(char *err, char *a, int exit_code);
 size_t	where_is(char *arg, char needle);
