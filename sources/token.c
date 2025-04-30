@@ -1,4 +1,14 @@
-// HEADER
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   token.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: raydogmu <raydogmu@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/30 19:59:53 by raydogmu          #+#    #+#             */
+/*   Updated: 2025/04/30 21:07:21 by raydogmu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 
@@ -20,20 +30,63 @@ int qoute_num(char *line, char type)
     return (result);
 }
 
-int single_qoute_num(char *line)
+int is_quite(char c)
 {
-    int i;
-    int result;
-    
-    i = 0;
-    result = 0;
-    if (qoute_num(line, '\'') == -1 || qoute_num(line, '\'') % 2 != 0)
-        return (-1);
-    else if (qoute_num(line, '\'') == 0)
+    if (c == '\'' || c == '"')
         return (1);
+    return (0);
+}
+
+t_list  *get_token(char *line, int a, int b)
+{
+    t_list  *head;
+    char    *content;
+    int     i;
+
+    if (!line || b < a)
+        return (NULL);
+    content = malloc(b - a + 1);
+    i = 0;
+    if (!content)
+        return (NULL);
+    while (i < (b - a))
+    {
+        content[i] = line[a + i];
+        i++;
+    }
+    content[b - a] = '\0';
+    head = ft_lstnew(content);
+    if (!head)
+    {
+        free(content);
+        return (NULL);
+    }
+    return (head);
+}
+
+t_list  *get_tokens(char *line)
+{
+    int     last_i;
+    int     i;
+    t_list  *head;
+
+    i = 0;
+    last_i = 0;
     while (line[i])
     {
-
+        if (is_quite(line[i]))
+            
+        i++;
     }
-    return (result);
-} // tek qoute 'de kaç malloc'luk yer açılacak?
+}
+
+int main(void)
+{
+    t_list *head;
+
+    head = get_token("merhaba deneme", 3, 7);
+    printf("cikti: %s\n", (char *) head->content);
+    free(head->content);
+    free(head);
+    return (0);
+} // deneme amaçlı.

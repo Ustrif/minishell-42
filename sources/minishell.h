@@ -31,5 +31,4 @@ int	ft_strcmp(const char *s1, const char *s2);
 char	*get_path(char *cmd, char **env);
 void	exec(char *cmd, char **env);
 
-
 #endif
