@@ -12,81 +12,61 @@
 
 #include "minishell.h"
 
-int qoute_num(char *line, char type)
+t_token *ft_tokennew(char *v)
 {
-    int result;
-    int i;
+	t_token *result;
 
-    result = 0;
-    i = 0;
-    if (!line)
-        return (-1);
-    while (line[i])
-    {
-        if (line[i] == type)
-            result++;
-        i++;
-    }
-    return (result);
+	result = malloc(sizeof(t_token));
+	if (result == NULL)
+		return (NULL);
+	result->value = v;
+	result->next = NULL;
+	return (result);
 }
 
-int is_quite(char c)
+void    ft_tokenadd_back(t_token **lst, t_token *new)
 {
-    if (c == '\'' || c == '"')
-        return (1);
-    return (0);
+	t_token *temp;
+
+	if (*lst == NULL)
+	{
+		*lst = new;
+		return ;
+	}
+	temp = *lst;
+	while (temp->next)
+		temp = temp->next;
+	temp->next = new;
 }
 
-t_list  *get_token(char *line, int a, int b)
+void	ft_tokenclear(t_token **lst)
 {
-    t_list  *head;
-    char    *content;
-    int     i;
+	struct s_token  *temp;
 
-    if (!line || b < a)
-        return (NULL);
-    content = malloc(b - a + 1);
-    i = 0;
-    if (!content)
-        return (NULL);
-    while (i < (b - a))
-    {
-        content[i] = line[a + i];
-        i++;
-    }
-    content[b - a] = '\0';
-    head = ft_lstnew(content);
-    if (!head)
-    {
-        free(content);
-        return (NULL);
-    }
-    return (head);
+	while (*lst)
+	{
+		free((*lst)->value);
+		temp = (*lst)->next;
+		free(*lst);
+		*lst = temp;
+	}
 }
 
-t_list  *get_tokens(char *line)
+int	ft_tokensize(t_token *lst)
 {
-    int     last_i;
-    int     i;
-    t_list  *head;
+	int	i;
 
-    i = 0;
-    last_i = 0;
-    while (line[i])
-    {
-        if (is_quite(line[i]))
-            
-        i++;
-    }
+	i = 0;
+	while (lst)
+	{
+		i++;
+		lst = lst->next;
+	}
+	return (i);
 }
 
-int main(void)
+void	ft_tokenadd_front(t_token **lst, t_token *new)
 {
-    t_list *head;
-
-    head = get_token("merhaba deneme", 3, 7);
-    printf("cikti: %s\n", (char *) head->content);
-    free(head->content);
-    free(head);
-    return (0);
-} // deneme amaçlı.
+	new->next = *lst;
+	*lst = new;
+}

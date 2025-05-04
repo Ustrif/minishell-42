@@ -13,6 +13,23 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+typedef enum e_token_type 
+{
+    TOKEN_WORD,
+    TOKEN_PIPE,
+    TOKEN_REDIR_IN,
+    TOKEN_REDIR_OUT,
+    TOKEN_REDIR_APPEND,
+    TOKEN_HEREDOC
+}           t_token_type;
+
+typedef struct s_token
+{
+    char            *value;
+    t_token_type    type;
+    struct s_token  *next;
+}               t_token;
+
 # include "../libft/libft.h"
 # include <stdio.h>
 # include <stdlib.h>
@@ -30,5 +47,11 @@ void	free_all(char **str);
 int	ft_strcmp(const char *s1, const char *s2);
 char	*get_path(char *cmd, char **env);
 void	exec(char *cmd, char **env);
+
+t_token *ft_tokennew(char *v);
+void    ft_tokenadd_back(t_token **lst, t_token *new);
+void	ft_tokenclear(t_token **lst);
+int	    ft_tokensize(t_token *lst);
+void	ft_tokenadd_front(t_token **lst, t_token *new);
 
 #endif
