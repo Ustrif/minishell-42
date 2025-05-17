@@ -13,6 +13,21 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+/*
+# define EXEC 1
+# define REDIR 2
+# define PIPE 3
+//# define LIST 4
+//# define BACK 5
+
+typedef struct s_pipe
+{
+    t_token_type    type;
+    char            *left;
+    char            *right;
+    struct s_pipe   *next;
+}               t_pipe;
+
 typedef enum e_token_type 
 {
     TOKEN_WORD,
@@ -22,11 +37,10 @@ typedef enum e_token_type
     TOKEN_REDIR_APPEND,
     TOKEN_HEREDOC
 }           t_token_type;
-
+*/
 typedef struct s_token
 {
     char            *value;
-    t_token_type    type;
     struct s_token  *next;
 }               t_token;
 
@@ -53,5 +67,12 @@ void    ft_tokenadd_back(t_token **lst, t_token *new);
 void	ft_tokenclear(t_token **lst);
 int	    ft_tokensize(t_token *lst);
 void	ft_tokenadd_front(t_token **lst, t_token *new);
+void    ft_tokendel(t_token *token);
+void    refine_tokens(t_token **head, t_token *(*split_func)(char *));
+int     is_quotes_closed(char *s);
+t_token	*split_blanks(char *s, char open, int i, int last_i);
+t_token	*split_pipes1(char *s);
+t_token	*split_redirs1(char *s);
+t_token	*split_redirs(char *s, char quote, int i, int last_i);
 
 #endif
