@@ -1,4 +1,14 @@
-//HEADER!!
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: beinan <beinan@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/19 14:58:43 by beinan            #+#    #+#             */
+/*   Updated: 2025/04/19 14:58:43 by beinan           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 
@@ -55,6 +65,7 @@ void	validate_command(char *cmd, char **s_cmd)
 		err("command not found: ", cmd, 127);
 	}
 }
+
 int	ft_strcmp(const char *s1, const char *s2)
 {
 	unsigned int	i;

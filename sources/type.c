@@ -12,24 +12,40 @@
 
 #include "minishell.h"
 
-int	open_file(char *filename, int in_out)
+void	select_token_type(t_token *token)
 {
-	int	x;
+	if (!token || !token->value)
+		return ;
+	if (ft_strncmp(token->value, "|", 2) == 0)
+		token->type = T_PIPE;
+	else if (ft_strncmp(token->value, "<", 2) == 0)
+		token->type = T_REDIR_IN;
+	else if (ft_strncmp(token->value, ">", 2) == 0)
+		token->type = T_REDIR_OUT;
+	else if (ft_strncmp(token->value, ">>", 3) == 0)
+		token->type = T_REDIR_APPEND;
+	else if (ft_strncmp(token->value, "<<", 3) == 0)
+		token->type = T_HEREDOC;
+	else
+		token->type = T_WORD;
+}
 
-	x = 0 ;
-	if (in_out == 0)
-		x = open(filename, O_RDONLY);
-	if (x < 0)
+void	classify_all_tokens(t_token *tokens)
+{
+	while (tokens)
 	{
-		perror("Error");
-		exit(1);
+		select_token_type(tokens);
+		tokens = tokens->next;
 	}
-	if (in_out == 1)
-		x = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0777);
-	if (x < 0)
-	{
-		perror("Error");
-		exit(1);
-	}
-	return (x);
+}
+
+t_token	*get_classified_tokens(char	*line)
+{
+	t_token	*head;
+
+	head = get_tokens(line);
+	if (!head)
+		return (NULL);
+	classify_all_tokens(head);
+	return (head);
 }

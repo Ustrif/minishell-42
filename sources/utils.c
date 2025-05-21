@@ -12,20 +12,20 @@
 
 #include "minishell.h"
 
-int is_quotes_closed(char *s)
+int	is_quotes_closed(char *s)
 {
-    char    open;
-    int     i;
+	char	open;
+	int		i;
 
-    open = 0;
-    i = 0;
-    while (s[i])
-    {
-        if (!open && (s[i]=='\'' || s[i]=='"'))
-            open = s[i];
-        else if (open && s[i] == open)
-            open = 0;
-        ++i;
-    }
-    return (open != 0);
+	open = 0;
+	i = 0;
+	while (s[i])
+	{
+		if (!open && (s[i] == '\'' || s[i] == '"' ))
+			open = s[i];
+		else if (open && s[i] == open)
+			open = 0;
+		++i;
+	}
+	return (open != 0);
 }
