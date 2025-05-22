@@ -17,8 +17,8 @@ int	main(int ac, char **argc, char **env)
 	char	*line;
 	char	**allwords;
 
-	printf("argc kullanma satiri: %s \n", argc[0]); // kullanilmiyor kaldir.
-	ac++; // ac kullanilmiyor kaldir.
+	if (!ac && !argc)
+		return (0);
 	while (1)
 	{
 		line = readline("minishell > ");
@@ -32,7 +32,6 @@ int	main(int ac, char **argc, char **env)
 	}
 	return (0);
 }
-
 
 /*echo "merhaba ssen"|grep x
 echo "merhaba ssen" |grep x

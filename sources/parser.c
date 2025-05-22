@@ -1,31 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token.c                                            :+:      :+:    :+:   */
+/*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: raydogmu <raydogmu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: beinan <beinan@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/30 19:59:53 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/04/30 21:07:21 by raydogmu         ###   ########.fr       */
+/*   Created: 2025/04/19 14:58:43 by beinan            #+#    #+#             */
+/*   Updated: 2025/04/19 14:58:43 by beinan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	is_quotes_closed(char *s)
+t_mini	*init_mini(void)
 {
-	char	open;
-	int		i;
+	t_mini	*new;
 
-	open = 0;
-	i = 0;
-	while (s[i])
-	{
-		if (!open && (s[i] == '\'' || s[i] == '"' ))
-			open = s[i];
-		else if (open && s[i] == open)
-			open = 0;
-		++i;
-	}
-	return (open != 0);
+	new = malloc(sizeof(t_mini));
+	if (!new)
+		return (NULL);
+	new->full_cmd = NULL;
+	new->full_path = NULL;
+	new->infile = STDIN_FILENO;
+	new->outfile = STDOUT_FILENO;
+	return (new);
 }

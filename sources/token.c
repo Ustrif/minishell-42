@@ -12,21 +12,22 @@
 
 #include "minishell.h"
 
-t_token *ft_tokennew(char *v)
+t_token	*ft_tokennew(char *v)
 {
-	t_token *result;
+	t_token	*result;
 
 	result = malloc(sizeof(t_token));
 	if (result == NULL)
 		return (NULL);
 	result->value = v;
+	result->type = T_WORD;
 	result->next = NULL;
 	return (result);
 }
 
-void    ft_tokenadd_back(t_token **lst, t_token *new)
+void	ft_tokenadd_back(t_token **lst, t_token *new)
 {
-	t_token *temp;
+	t_token	*temp;
 
 	if (*lst == NULL)
 	{
@@ -41,7 +42,7 @@ void    ft_tokenadd_back(t_token **lst, t_token *new)
 
 void	ft_tokenclear(t_token **lst)
 {
-	struct s_token  *temp;
+	struct s_token	*temp;
 
 	while (*lst)
 	{
