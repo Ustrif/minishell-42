@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: beinan <beinan@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 15:02:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/04/30 19:10:52 by beinan           ###   ########.fr       */
+/*   Updated: 2025/05/22 23:05:56 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int	main(int ac, char **argc, char **env)
 {
 	char	*line;
 	char	**allwords;
+	int		pid;
 
 	if (!ac && !argc)
 		return (0);
@@ -23,7 +24,7 @@ int	main(int ac, char **argc, char **env)
 	{
 		line = readline("minishell > ");
 		allwords = ft_split(line, ' ');
-		int pid = fork();
+		pid = fork();
 		if (pid == 0)
 			exec(allwords[0], env);
 		waitpid(-1, NULL, 0);
