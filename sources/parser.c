@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 23:05:10 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/20 13:50:44 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/20 14:39:52 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,4 +24,18 @@ t_mini	*init_mini(void)
 	new->infile = STDIN_FILENO;
 	new->outfile = STDOUT_FILENO;
 	return (new);
+}
+
+void	free_mini(t_mini *mini)
+{
+	if (!mini)
+		return ;
+	if (mini->full_cmd)
+		free_all(mini->full_cmd);
+	free(mini->full_path);
+	if (mini->infile != STDIN_FILENO)
+		close(mini->infile);
+	if (mini->outfile != STDOUT_FILENO)
+		close(mini->outfile);
+	free(mini);
 }
