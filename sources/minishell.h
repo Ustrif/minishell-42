@@ -70,5 +70,6 @@ t_token	*split_redirs1(char *s);
 t_token	*split_redirs(char *s, char quote, int i, int last_i);
 t_token	*get_tokens(const char *line);
 t_token	*get_classified_tokens(char	*line);
+t_token	*get_unqouted_tokens(t_token *head);
 
 #endif
