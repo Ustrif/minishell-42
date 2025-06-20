@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   qoute.c                                            :+:      :+:    :+:   */
+/*   quote.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 09:20:18 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/20 09:39:54 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/20 12:48:17 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,6 @@ static char	*remove_quotes(char *s)
 	i = 0;
 	j = 0;
 	quote = 0;
-	if (!s)
-		return (NULL);
 	result = malloc(ft_strlen(s) + 1);
 	if (!result)
 		return (NULL);
@@ -32,7 +30,10 @@ static char	*remove_quotes(char *s)
 		if (!quote && (s[i] == '\'' || s[i] == '"'))
 			quote = s[i++];
 		else if (quote && s[i] == quote)
-			quote = 0, i++;
+		{
+			quote = 0;
+			i++;
+		}
 		else
 			result[j++] = s[i++];
 	}
