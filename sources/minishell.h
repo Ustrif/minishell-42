@@ -47,6 +47,13 @@ typedef struct s_mini
 	int		outfile;
 }	t_mini;
 
+typedef struct s_promp
+{
+	t_list	*cmds;
+	char	**envp;
+	pid_t	pid;
+}			t_promp;
+
 void	err(char *err, char *a, int exit_code);
 size_t	where_is(char *arg, char needle);
 void	command_check(char *arg);
@@ -76,5 +83,7 @@ void	free_mini(void *m);
 int		open_heredoc(t_token *tok);
 t_list	*get_minis(t_token *tokens);
 t_mini	*init_mini(void);
+void	del_prompt(t_promp *prompt, void (*del)(void *));
+t_promp	*get_prompt(t_list *cmds, char **env);
 
 #endif

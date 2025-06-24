@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 09:20:40 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/24 10:47:47 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/24 20:30:34 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	open_heredoc(t_token *tok)
 		if (ft_strcmp(line, delim) == 0)
 		{
 			free(line);
-			break;
+			break ;
 		}
 		write(fd[1], line, ft_strlen(line));
 		write(fd[1], "\n", 1);
