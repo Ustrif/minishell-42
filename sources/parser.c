@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 23:05:10 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/20 14:39:52 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/24 12:47:15 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,11 @@ t_mini	*init_mini(void)
 	return (new);
 }
 
-void	free_mini(t_mini *mini)
+void	free_mini(void *m)
 {
+	t_mini	*mini;
+
+	mini = m;
 	if (!mini)
 		return ;
 	if (mini->full_cmd)

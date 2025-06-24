@@ -72,6 +72,9 @@ t_token	*get_tokens(const char *line);
 t_token	*get_classified_tokens(char	*line);
 t_token	*get_unqouted_tokens(t_token *head);
 char	**get_swords(char **words, char *word);
-void	free_mini(t_mini *mini);
+void	free_mini(void *m);
+int		open_heredoc(t_token *tok);
+t_list	*get_minis(t_token *tokens);
+t_mini	*init_mini(void);
 
 #endif

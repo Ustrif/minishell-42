@@ -1,5 +1,5 @@
 SRC = sources/*.c
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g #g kaldir.
 LIBFT = libft/libft.a
 NAME = minishell
 
