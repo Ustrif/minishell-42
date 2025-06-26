@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser1.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 11:01:10 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/24 12:43:02 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/26 14:11:08 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,20 +23,20 @@ void	*cleanup(t_mini *mini, char **full_cmd, t_list **cmds)
 	return (NULL);
 }
 
-void	*job(t_token *tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
+void	*job(t_token **tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
 {
-	if (tokens->type == T_WORD)
+	if ((*tokens)->type == T_WORD)
 	{
-		*full_cmd = get_swords(*full_cmd, tokens->value);
+		*full_cmd = get_swords(*full_cmd, (*tokens)->value);
 		if (!(*full_cmd))
 			return (cleanup(*mini, *full_cmd, cmds));
 	}
-	else if (tokens->type == T_REDIR_IN)
+	else if ((*tokens)->type == T_REDIR_IN)
 	{
-		(*mini)->infile = open(tokens->next->value, O_RDONLY);
+		(*mini)->infile = open((*tokens)->next->value, O_RDONLY);
 		if ((*mini)->infile < 0)
 			return (cleanup(*mini, *full_cmd, cmds));
-		tokens = tokens->next;
+		(*tokens) = (*tokens)->next;
 	}
 	return ((void *)1);
 }
@@ -95,7 +95,7 @@ t_list	*get_minis(t_token *tokens)
 		return (NULL);
 	while (tokens)
 	{
-		if (job(tokens, &full_cmd, &mini, &cmds) == NULL
+		if (job(&tokens, &full_cmd, &mini, &cmds) == NULL
 			|| job1(&tokens, &full_cmd, &mini, &cmds) == NULL
 			|| job2(tokens, &full_cmd, &mini, &cmds) == NULL)
 			return (NULL);
