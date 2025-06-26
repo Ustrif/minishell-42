@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 15:02:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/05/22 23:05:56 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/26 11:53:45 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	main(int ac, char **argc, char **env)
+/*int	main(int ac, char **argc, char **env)
 {
 	char	*line;
 	char	**allwords;
@@ -32,7 +32,7 @@ int	main(int ac, char **argc, char **env)
 		free(line);
 	}
 	return (0);
-}
+}*/
 
 /*echo "merhaba ssen"|grep x
 echo "merhaba ssen" |grep x
