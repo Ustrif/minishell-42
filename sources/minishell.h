@@ -50,7 +50,7 @@ void	exec(char *cmd, char **env);
 int   get_pwd();
 int	get_cd(char **args);
 int	ft_echo(char **args);
-int ft_env(char **args, t_env *env_list);
+int ft_env(t_env *env_list);
 t_env	*create_env(const char *env_str);
 void	env_add_node(t_env **env_list, t_env *new_node);
 int		command_export(t_env **env_list, char **args);

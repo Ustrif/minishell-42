@@ -37,7 +37,7 @@ int	ft_buildin(char **args, t_env **env_list)
 	else if (ft_strcmp(args[0], "echo") == 0)
 		return ft_echo(args);
 	else if (ft_strcmp(args[0], "env") == 0)
-		return ft_env(args, *env_list);
+		return ft_env(*env_list);
 	else if (ft_strcmp(args[0], "cd") == 0)
 		return get_cd(args);
 	else if (ft_strcmp(args[0], "export") == 0)

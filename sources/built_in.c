@@ -84,19 +84,20 @@ int	ft_echo(char **args)
 	return (0);
 }
 
-int ft_env(char **args, t_env *env_list)
+int ft_env(t_env *env_list)
 {
-	(void)args;
-	while (env_list)
-	{
-		if (env_list->value)
-		{
-			write(1, env_list->key, ft_strlen(env_list->key));
-			write(1, "=", 1);
-			write(1, env_list->value, ft_strlen(env_list->value));
-			write(1, "\n", 1);
-		}
-		env_list = env_list->next;
-	}
+    t_env *tmp = env_list;
+
+    while (tmp)
+    {
+        if (tmp->value)
+        {
+            write(1, tmp->key, ft_strlen(tmp->key));
+            write(1, "=", 1);
+            write(1, tmp->value, ft_strlen(tmp->value));
+            write(1, "\n", 1);
+        }
+        tmp = tmp->next;
+    }
 	return (0);
 }
