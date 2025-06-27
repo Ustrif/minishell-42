@@ -85,5 +85,7 @@ t_list	*get_minis(t_token *tokens);
 t_mini	*init_mini(void);
 void	del_prompt(t_promp *prompt, void (*del)(void *));
 t_promp	*get_prompt(t_list *cmds, char **env);
+t_list	*get_full_minis(t_token *head, char **env);
+int		count_words(char **words);
 
 #endif
