@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 09:20:18 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/20 12:48:17 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/28 09:50:22 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ t_token	*get_unqouted_tokens(t_token *head)
 	t_token	*temp;
 	char	*value;
 
+	if (!head)
+		return (NULL);
 	temp = head;
 	while (temp)
 	{

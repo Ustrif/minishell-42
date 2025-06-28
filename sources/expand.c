@@ -3,200 +3,92 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 11:54:03 by codespace         #+#    #+#             */
-/*   Updated: 2025/06/26 16:01:30 by codespace        ###   ########.fr       */
+/*   Updated: 2025/06/28 11:05:54 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-/*
-typedef struct s_env {
-	char		*key;
-	char		*value;
-	struct s_env	*next;
-} t_env;
 
-char *ft_strndup(const char *s, size_t n) 
+static char	*extract_var_name(const char *s, int start, int *len)
 {
-    char *new = malloc(n + 1);
-    size_t i = 0;
+	int		idx;
 
-    if (!new)
-        return NULL;
-    while (i < n)
-    {
-        new[i] = s[i];
-        i++;
-    }
-    new[n] = '\0';
-    return new;
+	idx = 0;
+	while (s[start + idx]
+		&& (ft_isalnum(s[start + idx]) || s[start + idx] == '_'))
+		idx++;
+	*len = idx;
+	return (ft_substr(s, start, idx));
 }
 
-t_env *create_env(const char *env_str)
+static char	*append_literal(const char *s, int start, int len, char *res)
 {
-	char *equal = ft_strchr(env_str, '=');
-	t_env *node = malloc(sizeof(t_env));
+	char	*part;
+	char	*tmp;
 
-	if (!node) 
-        return NULL;
-	if (equal)
-    {
-		size_t key_len = equal - env_str;
-		node->key = ft_strndup(env_str, key_len);
-		node->value = ft_strdup(equal + 1);
-	} 
-    else
-    {
-		node->key = ft_strdup(env_str);
-		node->value = NULL;
-	}
-	node->next = NULL;
-	return node;
+	part = ft_substr(s, start, len);
+	if (!part)
+		return (NULL);
+	tmp = ft_strjoin(res, part);
+	free(part);
+	free(res);
+	return (tmp);
 }
 
-void env_add_node(t_env **env_list, t_env *new_node)
+static char	*append_variable(const char *s, int *i, int *last, char *res)
 {
-	if (!*env_list)
-    {
-		*env_list = new_node;
-		return ;
-	}
-	t_env *tmp = *env_list;
-	while (tmp->next)
-		tmp = tmp->next;
-	tmp->next = new_node;
-}
+	char	*var;
+	char	*env;
+	int		vlen;
+	char	*tmp;
 
-t_env *init_env(char **envp)
-{
-	t_env *env_list = NULL;
-	t_env *node;
-
-	while (*envp)
-	{
-		node = create_env(*envp);
-		env_add_node(&env_list, node);
-		envp++;
-	}
-	return env_list;
-}
-
-char *get_env_value(t_env *env_list, char *key)
-{
-	while (env_list)
-	{
-		if (ft_strcmp(env_list->key, key) == 0)
-			return env_list->value;
-		env_list = env_list->next;
-	}
-	return NULL;
-}
-
-void	update_open(char *s, char *open, int i)
-{
-	if (!(*open) && s[i] == '\'')
-		(*open) = '\'';
-	else if ((*open) == '\'' && s[i] == '\'')
-		(*open) = 0;
-}
-
-char	*get_expanded_data1(char *s, int i, int last_i, char open, t_env	*env_list)
-{
-	int		y;
-	char	*result = "";
-	char	*value;
-	char	*temp;
-	char	*prefix;
-
-	while (s[i])
-	{
-		update_open(s, &open, i);
-		if (s[i] == '$' && !open && s[i+1] &&
-			(ft_isalpha(s[i+1]) || s[i+1] == '_'))
-		{
-			prefix = ft_substr(s, last_i, i - last_i);
-			y = 1;
-			while (s[i+y] && (ft_isalnum(s[i+y]) || s[i+y] == '_'))
-				y++;
-			{
-				char *varname = ft_substr(s, i+1, y-1);
-				//printf("%s\n", varname);
-				if (!varname)
-				{
-					free(prefix);
-					return (NULL);
-				}
-				//value = ft_strdup("STRDUP!"); //expand(varname); -> expand(NULL) sorun olmamalı.
-				
-				value = get_env_value(env_list, varname);
-				free(varname);
-
-				if (!value)
-				{
-					free(prefix);
-					return (NULL);
-				}
-			}
-			
-			//printf("%s\n",prefix);
-			temp = ft_strjoin(result, prefix);
-			//printf("%s",temp);
-			free(prefix);
-			
-			if (!temp)
-			{
-				free(value);
-				return NULL;
-			}
-			if (value)
-				result = ft_strjoin(temp, value);
-			else 
-				result = ft_strdup(temp);
-			free(temp);
-			free(value);
-			if (!result)
-				return NULL;
-			i += y - 1;
-			last_i = i + 1;
-		}
-		i++;
-	}
-	temp = ft_substr(s, last_i, i - last_i);
-	if (!temp)
-		return (free(result), NULL);
-	prefix = ft_strjoin(result, temp);
-	free(temp);
-	free(result);
-	return (prefix);
-}
-
-char *get_expanded_data(char *s, t_env	*env_list)
-{
-	char	*res;
-	//printf("%s", env_list->value);
-	res = get_expanded_data1(s, 0, 0, 0, env_list);
+	if (!res)
+		return (NULL);
+	var = extract_var_name(s, *i + 1, &vlen);
+	if (!var)
+		return (NULL);
+	env = getenv(var); // degisecek.
+	free(var);
+	if (!env)
+		env = "";
+	tmp = ft_strjoin(res, env);
+	if (!tmp)
+		return (NULL);
+	free(res);
+	res = tmp;
+	*i += vlen + 1;
+	*last = *i;
 	return (res);
 }
 
-int	main(int ac, char **av, char **envp)
+char	*get_expanded_data1(const char *s, int i, int last, char open)
 {
-	char	*res;
-	(void)ac;
-	(void)av;
+	char	*result;
 
-	t_env	*env_list = init_env(envp);
-	char *test = "USER";
-	if(!get_env_value(env_list, test))
-		printf("yokkkk\n");
-	else 
-		printf("%s\n", get_env_value(env_list, test));
-
-	//printf("%s", env_list->key);
-	res = get_expanded_data("\"$USERdeneme.-----$USER-$?\"", env_list);
-	//res = get_expanded_data("\" $USER \"", env_list);
-	printf("%s \n", res);
-	return(0);
+	result = ft_strdup("");
+	if (!result)
+		return (NULL);
+	while (s[i])
+	{
+		if (!open && (s[i] == '\'' || s[i] == '"'))
+			open = s[i++];
+		else if (open && s[i] == open)
+			open = 0, i++;
+		else if (s[i] == '$' && open != '\'' && s[i + 1]
+			&& (ft_isalnum(s[i + 1]) || s[i + 1] == '_'))
+		{
+			result = append_literal(s, last, i - last, result);
+			result = append_variable(s, &i, &last, result);
+			if (!result)
+				return (NULL);
+		}
+		else
+			i++;
+	}
+	if (i > last)
+		result = append_literal(s, last, i - last, result);
+	return (result);
 }
-*/

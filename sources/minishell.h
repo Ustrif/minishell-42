@@ -87,5 +87,8 @@ void	del_prompt(t_promp *prompt, void (*del)(void *));
 t_promp	*get_prompt(t_list *cmds, char **env);
 t_list	*get_full_minis(t_token *head, char **env);
 int		count_words(char **words);
+char	**get_fenv(char **e);
+char	*get_expanded_data1(const char *s, int i, int last, char open);
+t_token	*get_expanded_tokens(t_token *head);
 
 #endif
