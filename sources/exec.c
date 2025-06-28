@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:01:38 by codespace         #+#    #+#             */
-/*   Updated: 2025/06/28 19:50:16 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/28 19:56:46 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ t_promp	*get_full_promp(char *s, char **env)
 	if (!minis)
 	{
 		ft_tokenclear(&head);
-		return (printf("s yok"), NULL);
+		return (NULL);
 	}
 	p = get_prompt(minis, env);
 	if (!p)

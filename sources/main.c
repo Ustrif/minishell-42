@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 12:51:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/28 19:49:09 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/28 19:57:32 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,7 @@ void	run(char *s, char **fenv)
 
 	prompt = get_full_promp(s, fenv);
 	if (!prompt)
-	{
-		perror("prompt error");
 		return ;
-	}
 	execute_cmds(prompt);
 	del_prompt(prompt, free_mini);
 }

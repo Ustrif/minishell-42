@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   full_path.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 15:47:17 by codespace         #+#    #+#             */
-/*   Updated: 2025/06/26 16:02:45 by codespace        ###   ########.fr       */
+/*   Updated: 2025/06/28 19:58:52 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ t_list	*get_full_minis(t_token *head, char **env)
 
 	result = get_minis(head);
 	if (!result)
-		return (printf("err"), NULL);
+		return (NULL);
 	temp = result;
 	while (temp)
 	{
