@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 11:54:03 by codespace         #+#    #+#             */
-/*   Updated: 2025/06/28 11:05:54 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/28 19:50:47 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,8 @@ char	*get_expanded_data1(const char *s, int i, int last, char open)
 	{
 		if (!open && (s[i] == '\'' || s[i] == '"'))
 			open = s[i++];
-		else if (open && s[i] == open)
-			open = 0, i++;
+		else if (open && s[i++] == open)
+			open = 0;
 		else if (s[i] == '$' && open != '\'' && s[i + 1]
 			&& (ft_isalnum(s[i + 1]) || s[i + 1] == '_'))
 		{

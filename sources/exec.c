@@ -6,13 +6,13 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:01:38 by codespace         #+#    #+#             */
-/*   Updated: 2025/06/28 12:57:00 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/28 19:50:16 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-extern int g_status;
+extern int	g_status;
 
 char	**get_fenv(char **e)
 {
@@ -36,11 +36,11 @@ char	**get_fenv(char **e)
 	return (result);
 }
 
-t_promp *get_full_promp(char *s, char **env)
+t_promp	*get_full_promp(char *s, char **env)
 {
-    t_token	*head;
-    t_list  *minis;
-    t_promp *p;
+	t_token	*head;
+	t_list	*minis;
+	t_promp	*p;
 
 	head = get_classified_tokens(s);
 	head = get_expanded_tokens(head);
@@ -49,18 +49,18 @@ t_promp *get_full_promp(char *s, char **env)
 		return (printf("quote err"), NULL);
 	minis = get_full_minis(head, env);
 	ft_tokenclear(&head);
-    if (!minis)
-    {
-        ft_tokenclear(&head);
-        return (printf("s yok"), NULL);
-    }
-    p = get_prompt(minis, env);
-    if (!p)
-    {
-        ft_tokenclear(&head);
-        ft_lstclear(&minis, free_mini);
-        return (printf("p"), NULL);
-    }
+	if (!minis)
+	{
+		ft_tokenclear(&head);
+		return (printf("s yok"), NULL);
+	}
+	p = get_prompt(minis, env);
+	if (!p)
+	{
+		ft_tokenclear(&head);
+		ft_lstclear(&minis, free_mini);
+		return (printf("p"), NULL);
+	}
 	return (p);
 }
 

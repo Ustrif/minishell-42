@@ -6,44 +6,92 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 09:46:25 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/28 13:17:01 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/28 19:46:33 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*get_scode_data(char *s)
+extern int	g_status;
+
+int	status_num(const char *s)
 {
-	
+	int		i;
+	int		count;
+	char	open;
+
+	open = 0;
+	i = 0;
+	count = 0;
+	while (s[i])
+	{
+		if (!open && (s[i] == '"' || s[i] == '\''))
+			open = s[i++];
+		else if (open && s[i++] == open)
+			open = 0;
+		else if (s[i] == '$' && open != '\'' && s[i + 1] == '?')
+		{
+			count++;
+			i += 2;
+		}
+		else
+			i++;
+	}
+	return (count);
 }
 
-char	*get_expanded_data(const char *s)
+void	update_result(char *num, char *result, int *j)
 {
-	char	*res;
+	int	k;
+	int	num_len;
 
-	res = get_expanded_data1(s, 0, 0, 0);
-	if (!res)
-		return (NULL);
-	
+	k = 0;
+	num_len = ft_strlen(num);
+	while (k < num_len)
+	{
+		result[(*j)] = num[k];
+		(*j)++;
+		k++;
+	}
+}
+
+int	close_quote(const char *s, int *i, int *j, char *res)
+{
+	res[(*j)++] = s[(*i)++];
+	return (0);
+}
+
+char	*for_result(char *res, int j)
+{
+	res[j] = '\0';
 	return (res);
 }
 
-t_token	*get_expanded_tokens(t_token *head)
+char	*get_scode_data1(const char *s, int i, char open, char *num)
 {
-	t_token	*temp;
-	char	*val;
+	int		j;
+	char	*result;
 
-	if (!head)
+	result = malloc(ft_strlen(s) + status_num(s) + 1);
+	if (!result)
 		return (NULL);
-	temp = head;
-	while (temp)
+	j = 0;
+	while (s[i])
 	{
-		val = temp->value;
-		temp->value = get_expanded_data(val);
-		free(val);
-		if (!temp->value)
-			ft_tokenclear(&head);
-		temp = temp->next;
+		if (!open && (s[i] == '"' || s[i] == '\''))
+		{
+			open = s[i++];
+			result[j++] = open;
+		}
+		else if (open && s[i] == open)
+			open = close_quote(s, &i, &j, result);
+		else if (s[i] == '$' && open != '\'' && s[i + 1] == '?')
+		{
+			update_result(num, result, &j);
+			i += 2;
+		}
+		else
+			result[j++] = s[i++];
 	}
-	return (head);
+	return (for_result(result, j));
 }
