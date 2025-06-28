@@ -6,17 +6,25 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 09:46:25 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/28 10:58:31 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/28 13:17:01 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+char	*get_scode_data(char *s)
+{
+	
+}
 
 char	*get_expanded_data(const char *s)
 {
 	char	*res;
 
 	res = get_expanded_data1(s, 0, 0, 0);
+	if (!res)
+		return (NULL);
+	
 	return (res);
 }
 

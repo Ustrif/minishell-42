@@ -90,5 +90,7 @@ int		count_words(char **words);
 char	**get_fenv(char **e);
 char	*get_expanded_data1(const char *s, int i, int last, char open);
 t_token	*get_expanded_tokens(t_token *head);
+void	execute_cmds(t_promp *prompt);
+t_promp *get_full_promp(char *s, char **env);
 
 #endif
