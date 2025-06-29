@@ -14,18 +14,19 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-t_env *init_env(char **envp)
+t_env	*init_env(char **envp)
 {
-	t_env *env_list = NULL;
-	t_env *node;
+	t_env	*env_list;
+	t_env	*node;
 
+	env_list = NULL;
 	while (*envp)
 	{
 		node = create_env(*envp);
 		env_add_node(&env_list, node);
 		envp++;
 	}
-	return env_list;
+	return (env_list);
 }
 
 int	ft_buildin(char **args, t_env **env_list)
@@ -33,19 +34,19 @@ int	ft_buildin(char **args, t_env **env_list)
 	if (!args || !args[0])
 		return (1);
 	else if (ft_strcmp(args[0], "pwd") == 0)
-		return get_pwd(args);
+		return (get_pwd(args));
 	else if (ft_strcmp(args[0], "echo") == 0)
-		return ft_echo(args);
+		return (ft_echo(args));
 	else if (ft_strcmp(args[0], "env") == 0)
-		return ft_env(args, *env_list);
+		return (ft_env(args, *env_list));
 	else if (ft_strcmp(args[0], "cd") == 0)
-		return get_cd(args);
+		return (get_cd(args));
 	else if (ft_strcmp(args[0], "export") == 0)
-		return command_export(env_list, args);
+		return (command_export(env_list, args));
 	else if (ft_strcmp(args[0], "unset") == 0)
-		return command_unset(args, env_list);
+		return (command_unset(args, env_list));
 	else if (ft_strcmp(args[0], "exit") == 0)
-		return ft_exit(args);
+		return (ft_exit(args));
 	return (-1);
 }
 
@@ -55,7 +56,6 @@ int	main(int ac, char **argc, char **envp)
 	char	**allwords;
 	int		pid;
 	t_env	*env_list = init_env(envp);
-	//int ret;
 
 	(void)ac;
 	(void)argc;
@@ -66,7 +66,6 @@ int	main(int ac, char **argc, char **envp)
 			break;
 		add_history(line);// BUNU KALDIRMAYI UNUTMA	
 		allwords = ft_split(line, ' ');
-		//ret = ft_buildin(allwords, &env_list);
 		if (ft_buildin(allwords, &env_list) == -1)
 		{
 			pid = fork();

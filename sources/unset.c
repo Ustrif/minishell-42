@@ -1,9 +1,10 @@
 #include "minishell.h"
 
-int is_valid_env_key(const char *key)
+int	is_valid_env_key(const char *key)
 {
-	int i = 0;
+	int	i;
 
+	i = 0;
 	if (!key || !(key[0] == '_' || ft_isalpha(key[0])))
 		return (0);
 	while (key[i])
@@ -15,11 +16,13 @@ int is_valid_env_key(const char *key)
 	return (1);
 }
 
-void env_remove_node(t_env **env_list, const char *key)
+void	env_remove_node(t_env **env_list, const char *key)
 {
-	t_env *prev = NULL;
-	t_env *curr = *env_list;
+	t_env	*prev;
+	t_env	*curr;
 
+	prev = NULL;
+	curr = *env_list;
 	while (curr)
 	{
 		if (ft_strcmp(curr->key, key) == 0)
@@ -32,17 +35,18 @@ void env_remove_node(t_env **env_list, const char *key)
 			if (curr->value)
 				free(curr->value);
 			free(curr);
-			return;
+			return ;
 		}
 		prev = curr;
 		curr = curr->next;
 	}
 }
 
-int command_unset(char **args, t_env **env_list)
+int	command_unset(char **args, t_env **env_list)
 {
-	int i = 1;
+	int	i;
 
+	i = 1;
 	while (args[i])
 	{
 		if (!is_valid_env_key(args[i]))

@@ -65,6 +65,7 @@ void	validate_command(char *cmd, char **s_cmd)
 		err("command not found: ", cmd, 127);
 	}
 }
+
 int	ft_strcmp(const char *s1, const char *s2)
 {
 	unsigned int	i;
