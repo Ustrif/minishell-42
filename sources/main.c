@@ -71,7 +71,7 @@ int	main(int ac, char **argc, char **envp)
 		{
 			pid = fork();
 			if (pid == 0)
-				exec(allwords[0], envp);
+				exec(allwords[0], envp); //BURAYA DİĞER FONKSİYON GELECEK BU KISIM KALKACAK
 			waitpid(pid, NULL, 0);
 		}
 		free_all(allwords);
