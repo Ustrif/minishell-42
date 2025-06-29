@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 11:01:10 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/29 08:34:54 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/29 08:43:51 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ void	*job1(t_token **tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
 				O_CREAT | O_WRONLY | O_TRUNC, 0644);
 		if ((*mini)->outfile < 0)
 		{
+			g_status = 1;
 			perror((*tokens)->next->value);
 			return (cleanup(*mini, *full_cmd, cmds));
 		}
@@ -64,7 +65,11 @@ void	*job1(t_token **tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
 	{
 		(*mini)->infile = open_heredoc(*tokens);
 		if ((*mini)->infile < 0)
+		{
+			g_status = 1;
+			perror((*tokens)->next->value);
 			return (cleanup(*mini, *full_cmd, cmds));
+		}
 		*tokens = (*tokens)->next;
 	}
 	return ((void *)1);
@@ -91,7 +96,11 @@ void	*job2(t_token **tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
 		(*mini)->outfile = open((*tokens)->next->value,
 				O_CREAT | O_WRONLY | O_APPEND, 0644);
 		if ((*mini)->outfile < 0)
+		{
+			g_status = 1;
+			perror((*tokens)->next->value);
 			return (cleanup(*mini, *full_cmd, cmds));
+		}
 		*tokens = (*tokens)->next;
 	}
 	return ((void *)1);
