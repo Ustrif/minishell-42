@@ -63,5 +63,13 @@ char *ft_strndup(const char *s, size_t n) ;
 t_env *find_env(t_env *env, const char *key);
 t_env *create_env(const char *env_str);
 void env_add_node(t_env **env_list, t_env *new_node);
+int	process_export_key_only(t_env **env_list, const char *arg);
+int	handle_export_error(char *key, char *value);
+int	update_existing_env(t_env *found, char *key, char *value);
+int	create_new_env_node(t_env **env_list, char *key, char *value);
+int	create_new_env_node(t_env **env_list, char *key, char *value);
+int	process_export_with_value(t_env **env_list, const char *arg);
+int	count_env_nodes(t_env *env_list);
+void	swap_env_nodes(t_env **env_array, int i, int j);
 
 #endif

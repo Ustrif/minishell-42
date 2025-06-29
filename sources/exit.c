@@ -6,6 +6,8 @@ int	ft_is_numeric(const char *str)
 		return (0);
 	if (*str == '-' || *str == '+')
 		str++;
+	if (!*str)
+		return (0);
 	while (*str)
 	{
 		if (!ft_isdigit(*str))
@@ -17,14 +19,16 @@ int	ft_is_numeric(const char *str)
 
 int	ft_exit(char **args)
 {
-	int exit_status;
+	int	exit_status;
 
 	write(1, "exit\n", 5);
 	if (!args[1])
 		exit(0);
 	if (!ft_is_numeric(args[1]))
 	{
-		write(2, "minishell: exit: numeric argument required\n", 43);
+		write(2, "minishell: exit: ", 17);
+		write(2, args[1], ft_strlen(args[1]));
+		write(2, ": numeric argument required\n", 28);
 		exit(255);
 	}
 	if (args[2])
