@@ -18,6 +18,7 @@
 # include <stdlib.h>
 # include <signal.h>
 # include <readline/readline.h>
+# include <readline/history.h>
 # include <unistd.h>
 # include <fcntl.h>
 # include <sys/wait.h>
@@ -94,5 +95,6 @@ void	execute_cmds(t_promp *prompt);
 t_promp	*get_full_promp(char *s, char **env);
 char	*get_scode_data1(const char *s, int i, char open, char *num);
 int		basics(char *s);
+int		print_error(char *s, int i);
 
 #endif
