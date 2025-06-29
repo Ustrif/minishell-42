@@ -18,6 +18,7 @@
 # include <stdlib.h>
 # include <signal.h>
 # include <readline/readline.h>
+# include <readline/history.h>
 # include <unistd.h>
 # include <fcntl.h>
 # include <sys/wait.h>
@@ -115,5 +116,15 @@ int		create_new_env_node(t_env **env_list, char *key, char *value);
 int		process_export_with_value(t_env **env_list, const char *arg);
 int		count_env_nodes(t_env *env_list);
 void	swap_env_nodes(t_env **env_array, int i, int j);
+t_list	*get_full_minis(t_token *head, char **env);
+int		count_words(char **words);
+char	**get_fenv(char **e);
+char	*get_expanded_data1(const char *s, int i, int last, char open);
+t_token	*get_expanded_tokens(t_token *head);
+void	execute_cmds(t_promp *prompt);
+t_promp	*get_full_promp(char *s, char **env);
+char	*get_scode_data1(const char *s, int i, char open, char *num);
+int		basics(char *s);
+int		print_error(char *s, int i);
 
 #endif

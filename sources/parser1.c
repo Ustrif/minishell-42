@@ -6,11 +6,13 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 11:01:10 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/24 12:43:02 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/29 08:43:51 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+extern int	g_status;
 
 void	*cleanup(t_mini *mini, char **full_cmd, t_list **cmds)
 {
@@ -23,20 +25,24 @@ void	*cleanup(t_mini *mini, char **full_cmd, t_list **cmds)
 	return (NULL);
 }
 
-void	*job(t_token *tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
+void	*job(t_token **tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
 {
-	if (tokens->type == T_WORD)
+	if ((*tokens)->type == T_WORD)
 	{
-		*full_cmd = get_swords(*full_cmd, tokens->value);
+		*full_cmd = get_swords(*full_cmd, (*tokens)->value);
 		if (!(*full_cmd))
 			return (cleanup(*mini, *full_cmd, cmds));
 	}
-	else if (tokens->type == T_REDIR_IN)
+	else if ((*tokens)->type == T_REDIR_IN)
 	{
-		(*mini)->infile = open(tokens->next->value, O_RDONLY);
+		(*mini)->infile = open((*tokens)->next->value, O_RDONLY);
 		if ((*mini)->infile < 0)
+		{
+			g_status = 1;
+			perror((*tokens)->next->value);
 			return (cleanup(*mini, *full_cmd, cmds));
-		tokens = tokens->next;
+		}
+		(*tokens) = (*tokens)->next;
 	}
 	return ((void *)1);
 }
@@ -48,24 +54,32 @@ void	*job1(t_token **tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
 		(*mini)->outfile = open((*tokens)->next->value,
 				O_CREAT | O_WRONLY | O_TRUNC, 0644);
 		if ((*mini)->outfile < 0)
+		{
+			g_status = 1;
+			perror((*tokens)->next->value);
 			return (cleanup(*mini, *full_cmd, cmds));
+		}
 		*tokens = (*tokens)->next;
 	}
 	else if ((*tokens)->type == T_HEREDOC)
 	{
 		(*mini)->infile = open_heredoc(*tokens);
 		if ((*mini)->infile < 0)
+		{
+			g_status = 1;
+			perror((*tokens)->next->value);
 			return (cleanup(*mini, *full_cmd, cmds));
+		}
 		*tokens = (*tokens)->next;
 	}
 	return ((void *)1);
 }
 
-void	*job2(t_token *tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
+void	*job2(t_token **tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
 {
 	t_list	*node;
 
-	if (tokens->type == T_PIPE)
+	if ((*tokens)->type == T_PIPE)
 	{
 		(*mini)->full_cmd = *full_cmd;
 		node = ft_lstnew(*mini);
@@ -76,6 +90,18 @@ void	*job2(t_token *tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
 		if (!(*mini))
 			return (cleanup(*mini, *full_cmd, cmds));
 		*full_cmd = NULL;
+	}
+	else if ((*tokens)->type == T_REDIR_APPEND)
+	{
+		(*mini)->outfile = open((*tokens)->next->value,
+				O_CREAT | O_WRONLY | O_APPEND, 0644);
+		if ((*mini)->outfile < 0)
+		{
+			g_status = 1;
+			perror((*tokens)->next->value);
+			return (cleanup(*mini, *full_cmd, cmds));
+		}
+		*tokens = (*tokens)->next;
 	}
 	return ((void *)1);
 }
@@ -95,9 +121,9 @@ t_list	*get_minis(t_token *tokens)
 		return (NULL);
 	while (tokens)
 	{
-		if (job(tokens, &full_cmd, &mini, &cmds) == NULL
+		if (job(&tokens, &full_cmd, &mini, &cmds) == NULL
 			|| job1(&tokens, &full_cmd, &mini, &cmds) == NULL
-			|| job2(tokens, &full_cmd, &mini, &cmds) == NULL)
+			|| job2(&tokens, &full_cmd, &mini, &cmds) == NULL)
 			return (NULL);
 		tokens = tokens->next;
 	}

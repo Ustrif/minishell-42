@@ -1,66 +1,60 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   quote.c                                            :+:      :+:    :+:   */
+/*   expand2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/20 09:20:18 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/28 09:50:22 by raydogmu         ###   ########.fr       */
+/*   Created: 2025/06/28 19:46:15 by raydogmu          #+#    #+#             */
+/*   Updated: 2025/06/28 19:46:46 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	*remove_quotes(char *s)
+extern int	g_status;
+
+char	*get_scode_data(const char *s)
 {
-	int		i;
-	int		j;
-	char	quote;
+	char	*num;
 	char	*result;
 
-	i = 0;
-	j = 0;
-	quote = 0;
-	result = malloc(ft_strlen(s) + 1);
-	if (!result)
+	num = ft_itoa(g_status);
+	if (!num)
 		return (NULL);
-	while (s[i])
-	{
-		if (!quote && (s[i] == '\'' || s[i] == '"'))
-			quote = s[i++];
-		else if (quote && s[i] == quote)
-		{
-			quote = 0;
-			i++;
-		}
-		else
-			result[j++] = s[i++];
-	}
-	result[j] = '\0';
+	result = get_scode_data1(s, 0, 0, num);
+	free(num);
 	return (result);
 }
 
-t_token	*get_unqouted_tokens(t_token *head)
+char	*get_expanded_data(const char *s)
+{
+	char	*res;
+	char	*dolarmark;
+
+	res = get_expanded_data1(s, 0, 0, 0);
+	if (!res)
+		return (NULL);
+	dolarmark = get_scode_data(res);
+	free(res);
+	return (dolarmark);
+}
+
+t_token	*get_expanded_tokens(t_token *head)
 {
 	t_token	*temp;
-	char	*value;
+	char	*val;
 
 	if (!head)
 		return (NULL);
 	temp = head;
 	while (temp)
 	{
-		value = remove_quotes(temp->value);
-		free(temp->value);
-		temp->value = value;
-		temp = temp->next;
-	}
-	temp = head;
-	while (temp)
-	{
+		val = temp->value;
+		temp->value = get_expanded_data(val);
+		free(val);
 		if (!temp->value)
-			return (ft_tokenclear(&head), NULL);
+			ft_tokenclear(&head);
 		temp = temp->next;
 	}
 	return (head);

@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 16:58:18 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/29 17:11:21 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/29 17:15:39 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	is_quotes_closed(char *s)
 	return (open != 0);
 }
 
-static int	count_words(char **words)
+int	count_words(char **words)
 {
 	int	n;
 
