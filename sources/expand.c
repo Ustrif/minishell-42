@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 11:54:03 by codespace         #+#    #+#             */
-/*   Updated: 2025/06/28 19:50:47 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/29 15:45:40 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,12 @@ static char	*append_variable(const char *s, int *i, int *last, char *res)
 	return (res);
 }
 
+static int	update_i(int *i)
+{
+	*i = *i + 1;
+	return (0);
+}
+
 char	*get_expanded_data1(const char *s, int i, int last, char open)
 {
 	char	*result;
@@ -75,8 +81,8 @@ char	*get_expanded_data1(const char *s, int i, int last, char open)
 	{
 		if (!open && (s[i] == '\'' || s[i] == '"'))
 			open = s[i++];
-		else if (open && s[i++] == open)
-			open = 0;
+		else if (open && s[i] == open)
+			open = update_i(&i);
 		else if (s[i] == '$' && open != '\'' && s[i + 1]
 			&& (ft_isalnum(s[i + 1]) || s[i + 1] == '_'))
 		{
