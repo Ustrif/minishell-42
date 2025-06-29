@@ -6,7 +6,7 @@
 /*   By: beinan <beinan@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 17:41:00 by beinan            #+#    #+#             */
-/*   Updated: 2025/04/30 19:14:51 by beinan           ###   ########.fr       */
+/*   Updated: 2025/04/30 20:22:47 by beinan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,8 @@ char	*get_path(char *cmd, char **env)
 	char	*path_part;
 	char	**s_cmd;
 
+	if (cmd[0] == '/' && access(cmd, F_OK | X_OK) == 0)
+		return (ft_strdup(cmd));
 	i = 0;
 	allpath = ft_split(my_getenv("PATH", env), ':');
 	s_cmd = ft_split(cmd, ' ');
@@ -66,9 +68,7 @@ char	*get_path(char *cmd, char **env)
 		exec = ft_strjoin(path_part, s_cmd[0]);
 		free(path_part);
 		if (access(exec, F_OK | X_OK) == 0)
-		{
 			return (free_all(allpath), free_all(s_cmd), exec);
-		}
 		i++;
 		free(exec);
 	}
