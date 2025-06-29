@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 11:01:10 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/28 20:08:18 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/29 08:34:54 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,10 @@ void	*job1(t_token **tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
 		(*mini)->outfile = open((*tokens)->next->value,
 				O_CREAT | O_WRONLY | O_TRUNC, 0644);
 		if ((*mini)->outfile < 0)
+		{
+			perror((*tokens)->next->value);
 			return (cleanup(*mini, *full_cmd, cmds));
+		}
 		*tokens = (*tokens)->next;
 	}
 	else if ((*tokens)->type == T_HEREDOC)
