@@ -6,11 +6,13 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 12:51:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/29 17:15:05 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/29 17:19:15 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	g_status;
 
 t_env	*init_env(char **envp)
 {
@@ -75,7 +77,6 @@ int	main(int ac, char **argc, char **envp)
 	}
 	return (0);
 }*/
-int	g_status;
 
 void	run(char *s, char **fenv)
 {
