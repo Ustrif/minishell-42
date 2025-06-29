@@ -21,7 +21,7 @@ t_env *init_env(char **envp)
 
 	while (*envp)
 	{
-		node = create_env(*envp); // VAR=VALUE string'ten node oluşturur
+		node = create_env(*envp);
 		env_add_node(&env_list, node);
 		envp++;
 	}
@@ -33,11 +33,11 @@ int	ft_buildin(char **args, t_env **env_list)
 	if (!args || !args[0])
 		return (1);
 	else if (ft_strcmp(args[0], "pwd") == 0)
-		return get_pwd();
+		return get_pwd(args);
 	else if (ft_strcmp(args[0], "echo") == 0)
 		return ft_echo(args);
 	else if (ft_strcmp(args[0], "env") == 0)
-		return ft_env(*env_list);
+		return ft_env(args, *env_list);
 	else if (ft_strcmp(args[0], "cd") == 0)
 		return get_cd(args);
 	else if (ft_strcmp(args[0], "export") == 0)

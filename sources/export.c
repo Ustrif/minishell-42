@@ -1,5 +1,203 @@
 #include "minishell.h"
 
+int	process_export_key_only(t_env **env_list, const char *arg)
+{
+	t_env	*new_node;
+
+	if (!is_valid_env_key(arg))
+	{
+		write(2, "bash: export: `", 16);
+		write(2, arg, ft_strlen(arg));
+		write(2, "': not a valid identifier\n", 26);
+		return (1);
+	}
+	if (!find_env(*env_list, arg))
+	{
+		new_node = create_env(arg);
+		env_add_node(env_list, new_node);
+	}
+	return (0);
+}
+
+static int	handle_export_error(char *key, char *value)
+{
+	write(2, "bash: export: `", 16);
+	write(2, key, ft_strlen(key));
+	write(2, "': not a valid identifier\n", 26);
+	free(key);
+	free(value);
+	return (1);
+}
+
+static int	update_existing_env(t_env *found, char *key, char *value)
+{
+	free(found->value);
+	found->value = value;
+	free(key);
+	return (0);
+}
+
+static int	create_new_env_node(t_env **env_list, char *key, char *value)
+{
+	t_env	*new_node;
+
+	new_node = malloc(sizeof(t_env));
+	if (!new_node)
+	{
+		free(key);
+		free(value);
+		return (1);
+	}
+	new_node->key = key;
+	new_node->value = value;
+	new_node->next = NULL;
+	env_add_node(env_list, new_node);
+	return (0);
+}
+
+int	process_export_with_value(t_env **env_list, const char *arg)
+{
+	const char	*equal;
+	char		*key;
+	char		*value;
+	t_env		*found;
+
+	equal = ft_strchr(arg, '=');
+	key = ft_strndup(arg, equal - arg);
+	value = ft_strdup(equal + 1);
+	if (!is_valid_env_key(key))
+		return (handle_export_error(key, value));
+	found = find_env(*env_list, key);
+	if (found)
+		return (update_existing_env(found, key, value));
+	else
+		return (create_new_env_node(env_list, key, value));
+}
+
+static int	count_env_nodes(t_env *env_list)
+{
+	int		count;
+	t_env	*tmp;
+
+	count = 0;
+	tmp = env_list;
+	while (tmp)
+	{
+		count++;
+		tmp = tmp->next;
+	}
+	return (count);
+}
+
+static void	swap_env_nodes(t_env **env_array, int i, int j)
+{
+	t_env	*temp;
+
+	temp = env_array[i];
+	env_array[i] = env_array[j];
+	env_array[j] = temp;
+}
+
+static void	sort_env_array(t_env **env_array, int count)
+{
+	int		i;
+	int		j;
+
+	i = 0;
+	while (i < count - 1)
+	{
+		j = 0;
+		while (j < count - 1 - i)
+		{
+			if (ft_strcmp(env_array[j]->key, env_array[j + 1]->key) > 0)
+				swap_env_nodes(env_array, j, j + 1);
+			j++;
+		}
+		i++;
+	}
+}
+
+static t_env	**create_env_array(t_env *env_list, int count)
+{
+	t_env	**env_array;
+	t_env	*tmp;
+	int		i;
+
+	env_array = malloc(sizeof(t_env *) * count);
+	if (!env_array)
+		return (NULL);
+	tmp = env_list;
+	i = 0;
+	while (tmp)
+	{
+		env_array[i] = tmp;
+		tmp = tmp->next;
+		i++;
+	}
+	return (env_array);
+}
+
+static void	print_env_entry(t_env *env)
+{
+	write(1, "declare -x ", 11);
+	write(1, env->key, ft_strlen(env->key));
+	if (env->value)
+	{
+		write(1, "=\"", 2);
+		write(1, env->value, ft_strlen(env->value));
+		write(1, "\"", 1);
+	}
+	write(1, "\n", 1);
+}
+
+static void	display_env_list(t_env *env_list)
+{
+	t_env	**env_array;
+	int		count;
+	int		i;
+
+	count = count_env_nodes(env_list);
+	if (count == 0)
+		return ;
+	env_array = create_env_array(env_list, count);
+	if (!env_array)
+		return ;
+	sort_env_array(env_array, count);
+	i = 0;
+	while (i < count)
+	{
+		print_env_entry(env_array[i]);
+		i++;
+	}
+	free(env_array);
+}
+
+int	command_export(t_env **env_list, char **args)
+{
+	int	i;
+	int	result;
+	int	ret;
+
+	if (!args[1])
+	{
+		display_env_list(*env_list);
+		return (0);
+	}
+	i = 1;
+	ret = 0;
+	while (args[i])
+	{
+		if (ft_strchr(args[i], '='))
+			result = process_export_with_value(env_list, args[i]);
+		else
+			result = process_export_key_only(env_list, args[i]);
+		if (result != 0)
+			ret = 1;
+		i++;
+	}
+	return (ret);
+}
+/*
 int process_export_key_only(t_env **env_list, const char *arg)
 {
 	if (!is_valid_env_key(arg))
@@ -90,7 +288,7 @@ int	command_export(t_env **env_list, char **args)
 	return (ret);
 }
 
-/*
+
 int command_export(t_env **env_list, char **args) {
 	int i = 1;
 	int ret = 0;
