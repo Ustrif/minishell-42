@@ -6,13 +6,11 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 09:46:25 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/28 19:46:33 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/30 09:37:20 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-extern int	g_status;
 
 int	status_num(const char *s)
 {

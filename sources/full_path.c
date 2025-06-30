@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 15:47:17 by codespace         #+#    #+#             */
-/*   Updated: 2025/06/28 19:58:52 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/30 08:35:31 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ t_list	*get_full_minis(t_token *head, char **env)
 	while (temp)
 	{
 		mini = temp->content;
-		mini->full_path = get_path(mini->full_cmd[0], env);
+		mini->full_path = get_real_path(mini->full_cmd[0], env);
 		temp->content = mini;
 		temp = temp->next;
 	}

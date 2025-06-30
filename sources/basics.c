@@ -6,17 +6,14 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 10:55:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/29 12:43:16 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/30 09:36:05 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-extern int	g_status;
-
 int	print_error(char *s, int i)
 {
-	g_status = 1;
 	printf("minishell: %s\n", s);
 	return (i);
 }

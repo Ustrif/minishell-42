@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 12:51:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/29 17:19:15 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/30 10:02:48 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ int	ft_buildin(char **args, t_env **env_list)
 		return (ft_exit(args));
 	return (-1);
 }
+
 /*
 int	main(int ac, char **argc, char **envp)
 {
@@ -78,15 +79,24 @@ int	main(int ac, char **argc, char **envp)
 	return (0);
 }*/
 
-void	run(char *s, char **fenv)
+void	run(char *s, char **fenv, t_env *tenv)
 {
-	t_promp	*prompt;
+	t_promp		*prompt;
+	static int	err_code = 0;
 
 	if (basics(s))
+	{
+		err_code = 1;
 		return ;
-	prompt = get_full_promp(s, fenv);
+	}
+	prompt = get_full_promp(s, fenv, &err_code);
 	if (!prompt)
+	{
+		err_code = 1;
 		return ;
+	}
+	prompt->tenv = tenv;
+	prompt->err_code = &err_code;
 	execute_cmds(prompt);
 	del_prompt(prompt, free_mini);
 }
@@ -114,18 +124,24 @@ int	main(int ac, char **argc, char **env)
 {
 	char	**fenv;
 	char	*line;
+	t_env	*env_list;
 
 	fenv = get_fenv(env);
 	if (!ac || !argc || !fenv)
 		return (print_error("minishell: fenv memory alloc err", 1));
+	env_list = init_env(env);
+	if (!env_list)
+		return (free(fenv), 1);
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, signal_handler);
+	get_real_path(*env, fenv);
+	get_env_value(env_list, NULL);
 	while (1)
 	{
 		line = readline("\001\033[1;92m\002minishell > \001\033[0;39m\002");
 		if (!line)
 			break ;
-		run(line, fenv);
+		run(line, fenv, env_list);
 		add_history(line);
 		free(line);
 	}

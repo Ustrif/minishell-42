@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 11:54:03 by codespace         #+#    #+#             */
-/*   Updated: 2025/06/29 15:45:40 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/30 09:17:44 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static char	*append_variable(const char *s, int *i, int *last, char *res)
 	var = extract_var_name(s, *i + 1, &vlen);
 	if (!var)
 		return (NULL);
-	env = getenv(var); // degisecek.
+	env = get_env_value(NULL, var);
 	free(var);
 	if (!env)
 		env = "";

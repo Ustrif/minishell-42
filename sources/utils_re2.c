@@ -1,33 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utlis2.c                                           :+:      :+:    :+:   */
+/*   utils_re2.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/29 16:58:25 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/30 09:18:44 by raydogmu         ###   ########.fr       */
+/*   Created: 2025/06/30 08:30:39 by raydogmu          #+#    #+#             */
+/*   Updated: 2025/06/30 08:46:38 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*get_env_value(t_env *env_list, const char *key)
+char	*get_real_path(char *s, char **env)
 {
-	static t_env	*e = NULL;
-	t_env			*temp;
+	static char	**e = NULL;
 
 	if (e == NULL)
 	{
-		e = env_list;
+		e = env;
 		return (NULL);
 	}
-	temp = e;
-	while (temp)
-	{
-		if (ft_strcmp(temp->key, key) == 0)
-			return (temp->value);
-		temp = temp->next;
-	}
-	return (NULL);
+	if (!s)
+		return (NULL);
+	else if (s[0] && s[1] && s[0] == '.' && s[1] == '/')
+		return (ft_strdup(s));
+	return (get_path(s, e));
 }

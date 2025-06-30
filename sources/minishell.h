@@ -22,6 +22,7 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include <sys/wait.h>
+# include <errno.h>
 
 typedef enum e_token_type
 {
@@ -32,6 +33,13 @@ typedef enum e_token_type
 	T_REDIR_APPEND,
 	T_HEREDOC
 }			t_token_type;
+
+typedef struct s_env
+{
+	char			*key;
+	char			*value;
+	struct s_env	*next;
+}	t_env;
 
 typedef struct s_token
 {
@@ -52,15 +60,10 @@ typedef struct s_promp
 {
 	t_list	*cmds;
 	char	**envp;
+	t_env	*tenv;
+	int		*err_code;
 	pid_t	pid;
 }			t_promp;
-
-typedef struct s_env
-{
-	char			*key;
-	char			*value;
-	struct s_env	*next;
-}	t_env;
 
 void	err(char *err, char *a, int exit_code);
 size_t	where_is(char *arg, char needle);
@@ -120,11 +123,13 @@ t_list	*get_full_minis(t_token *head, char **env);
 int		count_words(char **words);
 char	**get_fenv(char **e);
 char	*get_expanded_data1(const char *s, int i, int last, char open);
-t_token	*get_expanded_tokens(t_token *head);
+t_token	*get_expanded_tokens(t_token *head, int err_code);
 void	execute_cmds(t_promp *prompt);
-t_promp	*get_full_promp(char *s, char **env);
+t_promp	*get_full_promp(char *s, char **env, int *err_code);
 char	*get_scode_data1(const char *s, int i, char open, char *num);
 int		basics(char *s);
 int		print_error(char *s, int i);
+char	*get_real_path(char *s, char **env);
+char	*get_env_value(t_env *env_list, const char *key);
 
 #endif
