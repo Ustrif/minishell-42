@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 11:01:10 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/30 09:38:10 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/30 11:20:34 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,10 +91,8 @@ void	*job2(t_token **tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
 		(*mini)->outfile = open((*tokens)->next->value,
 				O_CREAT | O_WRONLY | O_APPEND, 0644);
 		if ((*mini)->outfile < 0)
-		{
-			perror((*tokens)->next->value);
-			return (cleanup(*mini, *full_cmd, cmds));
-		}
+			return (perror((*tokens)->next->value),
+				cleanup(*mini, *full_cmd, cmds));
 		*tokens = (*tokens)->next;
 	}
 	return ((void *)1);

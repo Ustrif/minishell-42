@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 12:51:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/30 10:38:38 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/30 11:20:05 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,35 +49,6 @@ int	ft_buildin(char **args, t_env **env_list)
 		return (ft_exit(args));
 	return (-1);
 }
-
-/*
-int	main(int ac, char **argc, char **envp)
-{
-	char	*line;
-	char	**allwords;
-	int		pid;
-	t_env	*env_list = init_env(envp);
-
-	(void)ac;
-	(void)argc;
-	while (1)
-	{
-		line = readline("minishell > ");
-		if (!line)
-			break;
-		allwords = ft_split(line, ' ');
-		if (ft_buildin(allwords, &env_list) == -1)
-		{
-			pid = fork();
-			if (pid == 0)
-	exec(allwords[0], envp); //BURAYA DİĞER FONKSİYON GELECEK BU KISIM KALKACAK
-			waitpid(pid, NULL, 0);
-		}
-		free_all(allwords);
-		free(line);
-	}
-	return (0);
-}*/
 
 void	run(char *s, char **fenv, t_env *tenv)
 {
