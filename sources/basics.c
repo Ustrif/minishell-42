@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 10:55:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/30 09:36:05 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/30 10:40:08 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,17 @@ int	is_blank(char *s)
 	return (0);
 }
 
-int	basics(char *s)
+int	basics(char *s, int *err_code)
 {
 	if (is_quotes_closed(s))
+	{
+		*err_code = 1;
 		return (print_error("cannot interpret unclosed quotes", 1));
+	}
 	if (is_blank(s))
+	{
+		*err_code = 0;
 		return (1);
+	}
 	return (0);
 }

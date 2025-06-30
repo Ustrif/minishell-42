@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:01:38 by codespace         #+#    #+#             */
-/*   Updated: 2025/06/30 10:03:42 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/30 11:03:25 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,11 @@ void	child_exec(t_mini *mini, char **envp, int prev_in, int pipe_out)
 
 	if (!mini->full_cmd || !mini->full_cmd[0])
 		exit(0);
+	if (!mini->full_path)
+	{
+		printf("minishell: %s: command not found\n", mini->full_cmd[0]);
+		exit(127);
+	}
 	if (execve(mini->full_path, mini->full_cmd, envp) == -1)
 	{
 		perror("minishell");

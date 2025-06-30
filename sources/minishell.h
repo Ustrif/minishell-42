@@ -127,7 +127,7 @@ t_token	*get_expanded_tokens(t_token *head, int err_code);
 void	execute_cmds(t_promp *prompt);
 t_promp	*get_full_promp(char *s, char **env, int *err_code);
 char	*get_scode_data1(const char *s, int i, char open, char *num);
-int		basics(char *s);
+int		basics(char *s, int *err_code);
 int		print_error(char *s, int i);
 char	*get_real_path(char *s, char **env);
 char	*get_env_value(t_env *env_list, const char *key);
