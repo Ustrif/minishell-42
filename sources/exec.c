@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:01:38 by codespace         #+#    #+#             */
-/*   Updated: 2025/06/30 11:03:25 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/30 12:12:00 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,17 +51,15 @@ t_promp	*get_full_promp(char *s, char **env, int *err_code)
 	ft_tokenclear(&head);
 	if (!minis)
 	{
-		*err_code = 1;
-		ft_tokenclear(&head);
+		*err_code = 2;
 		return (NULL);
 	}
 	p = get_prompt(minis, env);
 	if (!p)
 	{
 		*err_code = 1;
-		ft_tokenclear(&head);
 		ft_lstclear(&minis, free_mini);
-		return (printf("p"), NULL);
+		return (NULL);
 	}
 	return (p);
 }

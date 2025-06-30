@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 15:47:17 by codespace         #+#    #+#             */
-/*   Updated: 2025/06/30 08:35:31 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/30 12:31:45 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ t_list	*get_full_minis(t_token *head, char **env)
 	t_list	*temp;
 	t_mini	*mini;
 
+	if (check_syntax(head))
+		return (NULL);
 	result = get_minis(head);
 	if (!result)
 		return (NULL);

@@ -131,5 +131,6 @@ int		basics(char *s, int *err_code);
 int		print_error(char *s, int i);
 char	*get_real_path(char *s, char **env);
 char	*get_env_value(t_env *env_list, const char *key);
+int		check_syntax(t_token *head);
 
 #endif

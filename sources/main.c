@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 12:51:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/30 11:20:05 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/06/30 12:11:42 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,10 +59,7 @@ void	run(char *s, char **fenv, t_env *tenv)
 		return ;
 	prompt = get_full_promp(s, fenv, &err_code);
 	if (!prompt)
-	{
-		err_code = 1;
 		return ;
-	}
 	prompt->tenv = tenv;
 	prompt->err_code = &err_code;
 	execute_cmds(prompt);
