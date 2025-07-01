@@ -19,11 +19,49 @@ int	is_operator(t_token_type type)
 		|| type == T_HEREDOC);
 }
 
+static int	print_syntax_error(t_token *token)
+{
+	ft_putstr_fd("minishell: syntax error near unexpected token '", 2);
+	if (!token)
+		ft_putendl_fd("newline'", 2);
+	else
+	{
+		ft_putstr_fd(token->value, 2);
+		ft_putendl_fd("'", 2);
+	}
+	return (1);
+}
+
+static int	is_redirection(int type)
+{
+	return (type == T_REDIR_IN || type == T_REDIR_OUT
+		|| type == T_REDIR_APPEND || type == T_HEREDOC);
+}
+
 int	check_syntax(t_token *head)
 {
 	if (!head)
 		return (1);
+	if (is_operator(head->type) && head->type != T_HEREDOC)
+		return (print_syntax_error(head));
+	while (head)
+	{
+		if (head->type == T_PIPE
+			&& (!head->next || is_operator(head->next->type)))
+			return (print_syntax_error(head->next));
+		if (is_redirection(head->type)
+			&& (!head->next || is_operator(head->next->type)))
+			return (print_syntax_error(head->next));
+		head = head->next;
+	}
+	return (0);
+}
 
+/*
+int	check_syntax(t_token *head)
+{
+	if (!head)
+		return (1);
 	if (is_operator(head->type) && head->type != T_HEREDOC)
 	{
 		ft_putstr_fd("minishell: syntax error near unexpected token '", 2);
@@ -63,3 +101,4 @@ int	check_syntax(t_token *head)
 	}
 	return (0);
 }
+*/

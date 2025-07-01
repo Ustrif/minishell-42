@@ -18,7 +18,7 @@ int	process_export_key_only(t_env **env_list, const char *arg)
 
 	if (!is_valid_env_key(arg))
 	{
-		write(2, "bash: export: `", 16);
+		write(2, "minishell: export: `", 21);
 		write(2, arg, ft_strlen(arg));
 		write(2, "': not a valid identifier\n", 26);
 		return (1);
@@ -35,7 +35,7 @@ int	process_export_key_only(t_env **env_list, const char *arg)
 
 int	handle_export_error(char *key, char *value)
 {
-	write(2, "bash: export: `", 16);
+	write(2, "minishell: export: `", 21);
 	write(2, key, ft_strlen(key));
 	write(2, "': not a valid identifier\n", 26);
 	free(key);

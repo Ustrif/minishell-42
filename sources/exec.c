@@ -98,14 +98,13 @@ int	exec_builtin(t_mini *mini, t_env **env_list)
 	else if (ft_strcmp(mini->full_cmd[0], "cd") == 0)
 		return (get_cd(mini->full_cmd));
 	else if (ft_strcmp(mini->full_cmd[0], "export") == 0)
-		return (command_export(env_list,mini->full_cmd));
+		return (command_export(env_list, mini->full_cmd));
 	else if (ft_strcmp(mini->full_cmd[0], "unset") == 0)
 		return (command_unset(mini->full_cmd, env_list));
 	else if (ft_strcmp(mini->full_cmd[0], "exit") == 0)
 		return (ft_exit(mini->full_cmd));
 	return (-1);
 }
-
 
 void	child_exec(t_mini *mini, char **envp, int prev_in, int pipe_out)
 {
@@ -131,7 +130,6 @@ void	child_exec(t_mini *mini, char **envp, int prev_in, int pipe_out)
 	}
 	if (pipe_out != -1)
 		close(pipe_out);
-
 	if (!mini->full_cmd || !mini->full_cmd[0])
 		exit(0);
 	if (!mini->full_path)
@@ -143,7 +141,7 @@ void	child_exec(t_mini *mini, char **envp, int prev_in, int pipe_out)
 	{
 		perror("minishell");
 		if (errno == EACCES || errno == ENOTDIR || errno == ENOEXEC)
-       		exit(126);
+			exit(126);
 		else if (errno == ENOENT)
 			exit(127);
 		else
