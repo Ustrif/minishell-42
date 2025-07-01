@@ -90,7 +90,7 @@ int	exec_builtin(t_mini *mini, t_env **env_list)
 	if (!mini->full_cmd || !mini->full_cmd[0])
 		return (1);
 	else if (ft_strcmp(mini->full_cmd[0], "pwd") == 0)
-		return (get_pwd(mini->full_cmd));
+		return (get_pwd());
 	else if (ft_strcmp(mini->full_cmd[0], "echo") == 0)
 		return (ft_echo(mini->full_cmd));
 	else if (ft_strcmp(mini->full_cmd[0], "env") == 0)

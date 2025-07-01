@@ -12,15 +12,10 @@
 
 #include "minishell.h"
 
-int	get_pwd(char **args)
+int	get_pwd()
 {
 	char	buffer[1024];
 
-	if (args[1])
-	{
-		write(2, "pwd: too many arguments\n", 24);
-		return (2);
-	}
 	if (getcwd(buffer, sizeof(buffer)) != NULL)
 	{
 		write(1, buffer, ft_strlen(buffer));
