@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:01:38 by codespace         #+#    #+#             */
-/*   Updated: 2025/07/01 16:54:08 by codespace        ###   ########.fr       */
+/*   Updated: 2025/07/01 19:45:05 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ t_promp	*get_full_promp(char *s, char **env, int *err_code)
 	t_promp	*p;
 	
 	head = get_classified_tokens(s);
-	head = get_expanded_tokens(head, *err_code);
 	head = get_unqouted_tokens(head);
 	if (!head)
 		return (*err_code = 1, NULL);

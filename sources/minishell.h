@@ -124,7 +124,6 @@ t_list	*get_full_minis(t_token *head, char **env);
 int		count_words(char **words);
 char	**get_fenv(char **e);
 char	*get_expanded_data1(const char *s, int i, int last, char open);
-t_token	*get_expanded_tokens(t_token *head, int err_code);
 void	execute_cmds(t_promp *prompt);
 t_promp	*get_full_promp(char *s, char **env, int *err_code);
 char	*get_scode_data1(const char *s, int i, char open, char *num);
@@ -134,5 +133,6 @@ char	*get_real_path(char *s, char **env);
 char	*get_env_value(t_env *env_list, const char *key);
 int		check_syntax(t_token *head);
 t_env	*init_env(char **envp);
+char	*get_expanded_data(const char *s, int err_code);
 
 #endif

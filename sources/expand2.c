@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 19:46:15 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/30 10:03:54 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/01 19:45:18 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,24 +36,4 @@ char	*get_expanded_data(const char *s, int err_code)
 	dolarmark = get_scode_data(res, err_code);
 	free(res);
 	return (dolarmark);
-}
-
-t_token	*get_expanded_tokens(t_token *head, int err_code)
-{
-	t_token	*temp;
-	char	*val;
-
-	if (!head)
-		return (NULL);
-	temp = head;
-	while (temp)
-	{
-		val = temp->value;
-		temp->value = get_expanded_data(val, err_code);
-		free(val);
-		if (!temp->value)
-			ft_tokenclear(&head);
-		temp = temp->next;
-	}
-	return (head);
 }

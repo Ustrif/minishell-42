@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 12:51:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/01 19:04:05 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/01 19:50:20 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,12 @@ void	run(char *s, char **fenv, t_env *tenv)
 {
 	t_promp		*prompt;
 	static int	err_code = 0;
+	char		*line;
 
-	if (basics(s, &err_code))
+	line = get_expanded_data(s, err_code);
+	if (basics(line, &err_code))
 		return ;
-	prompt = get_full_promp(s, fenv, &err_code);
+	prompt = get_full_promp(line, fenv, &err_code);
 	if (!prompt)
 		return ;
 	prompt->tenv = tenv;
