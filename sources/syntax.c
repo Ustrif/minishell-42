@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 12:31:33 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/30 12:31:51 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/01 16:37:55 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int	check_syntax(t_token *head)
 {
 	if (!head)
 		return (1);
-	if (is_operator(head->type) && head->type != T_HEREDOC)
+	if (head->type == T_PIPE)
 		return (print_syntax_error(head));
 	while (head)
 	{
