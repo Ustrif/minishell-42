@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:01:38 by codespace         #+#    #+#             */
-/*   Updated: 2025/06/30 12:12:00 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/01 16:54:08 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,22 @@ int	exec_builtin(t_mini *mini, t_env **env_list)
 	return (-1);
 }
 
+int	isdirectory(char **full_path)
+{
+	struct stat	sb;
+
+	if (!full_path)
+		return (0);
+	if (stat(full_path[0], &sb) == 0)
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd(full_path[0], STDERR_FILENO);
+		ft_putstr_fd(": is a directory\n", STDERR_FILENO);
+		return (1);
+	}
+	return (0);
+}
+
 void	child_exec(t_mini *mini, char **envp, int prev_in, int pipe_out)
 {
 	// Restore default signal handling in child processes
@@ -164,8 +180,8 @@ void	child_exec(t_mini *mini, char **envp, int prev_in, int pipe_out)
 		ft_putstr_fd(": command not found\n", STDERR_FILENO);
 		exit(127);
 	}
-	
-	// Execute the command
+	if (isdirectory(mini->full_cmd))
+		exit(126);
 	if (execve(mini->full_path, mini->full_cmd, envp) == -1)
 	{
 		perror("minishell");

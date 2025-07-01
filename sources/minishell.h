@@ -23,6 +23,7 @@
 # include <fcntl.h>
 # include <sys/wait.h>
 # include <errno.h>
+#include <sys/stat.h>
 
 typedef enum e_token_type
 {
