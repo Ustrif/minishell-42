@@ -41,7 +41,7 @@ int	ft_exit(char **args)
 		write(2, "minishell: exit: ", 17);
 		write(2, args[1], ft_strlen(args[1]));
 		write(2, ": numeric argument required\n", 28);
-		exit(255);
+		exit(2);
 	}
 	if (args[2])
 	{

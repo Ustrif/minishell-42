@@ -33,6 +33,11 @@ int	get_cd(char **args)
 {
 	char	*home;
 
+	if (args[1] && args[2])
+	{
+		write(2, "minishell: cd: too many arguments\n", 34);
+		return (1);
+	}
 	if (!args[1])
 	{
 		home = getenv("HOME");
@@ -42,18 +47,12 @@ int	get_cd(char **args)
 			return (1);
 		}
 		if (chdir(home) != 0)
-		{
-			perror("cd");
-			return (1);
-		}
+			return (perror("cd"), 1);
 	}
 	else
 	{
 		if (chdir(args[1]) != 0)
-		{
-			perror("cd");
-			return (1);
-		}
+			return (perror("cd"), 1);
 	}
 	return (0);
 }
