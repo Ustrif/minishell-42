@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 12:51:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/02 03:18:41 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/02 05:23:03 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,7 @@ void	signal_handler(int sig)
 		rl_redisplay();
 	}
 	if (sig == SIGQUIT)
-	{
-		/*rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();*/
-		return ; // soruna sebep oluyor. ust taraf.
-	}
+		return ;
 }
 
 int	main(int ac, char **argc, char **env)
