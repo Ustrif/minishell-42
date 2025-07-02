@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 03:04:26 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/02 08:09:01 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/02 08:36:55 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ void execute_cmd(t_mini *cmd, char **envp)
 {
 	struct stat sb;
 
+	if (!cmd->full_path && !cmd->full_cmd)
+		exit (0);
 	if (!cmd->full_path)
 	{
 		fprintf(stderr, "minishell: %s: command not found\n", cmd->full_cmd[0]);
