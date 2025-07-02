@@ -155,5 +155,7 @@ void	execute_pipeline(t_promp *promp);
 t_redir	*ft_redirnnew(char *v, t_redir_type type);
 void	ft_rediradd_back(t_redir **lst, t_redir *new);
 void	ft_redirclear(t_redir **lst);
+int		is_builtin(char **args);
+int		exec_builtin(t_mini *mini, t_env **env_list);
 
 #endif
