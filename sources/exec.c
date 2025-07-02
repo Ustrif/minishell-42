@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 03:04:26 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/02 05:38:27 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/02 06:11:28 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,20 +177,6 @@ void execute_pipeline(t_promp *promp)
         count++;
         node = node->next;
     }
-    t_mini *only = promp->cmds->content;
-    if (count == 1 && is_builtin(only->full_cmd) && ft_strcmp(only->full_cmd[0], "exit") == 0)
-    {
-        setup_redirections(only);
-
-        if (ft_strcmp(only->full_cmd[0], "exit") == 0)
-        {
-            int code = exec_builtin(only, &promp->tenv);
-            exit(code);
-        }
-        int ret = exec_builtin(only, &promp->tenv);
-        *(promp->err_code) = ret;
-        return ;
-    }
     arr  = malloc(sizeof(t_mini*) * count);
     pids = malloc(sizeof(pid_t)    * count);
     if (!arr || !pids)
@@ -201,7 +187,13 @@ void execute_pipeline(t_promp *promp)
         arr[i] = node->content;
         node = node->next;
     }
-
+    if (count == 1 && is_builtin(arr[0]->full_cmd))
+    {
+        *(promp->err_code) = exec_builtin(arr[0], &promp->tenv);
+        free(arr);
+        free(pids);
+        return ;
+    }
     // 2) Bütün pipe’ları aç (count-1 tane)
     int pipes[count - 1][2];
     for (i = 0; i < count - 1; i++)
