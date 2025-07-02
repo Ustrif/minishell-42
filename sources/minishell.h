@@ -53,10 +53,10 @@ typedef struct s_mini
 {
 	char	**full_cmd;
 	char	*full_path;
-	char	*infilec;
-	char	*outfilec;
-	char	*appendfilec;
-	char	*heredoc;
+	char	**infilec;
+	char	**outfilec;
+	char	**appendfilec;
+	char	**heredoc;
 	int		infile;
 	int		outfile;
 }	t_mini;
@@ -138,5 +138,6 @@ char	*get_env_value(t_env *env_list, const char *key);
 int		check_syntax(t_token *head);
 t_env	*init_env(char **envp);
 char	*get_expanded_data(const char *s, int err_code);
+void	execute_pipeline(t_promp *promp);
 
 #endif

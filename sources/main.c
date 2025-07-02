@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 12:51:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/02 00:51:40 by codespace        ###   ########.fr       */
+/*   Updated: 2025/07/02 00:58:11 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void	run(char *s, char **fenv, t_env *tenv)
 		return ;
 	prompt->tenv = tenv;
 	prompt->err_code = &err_code;
+	execute_pipeline(prompt);
 	free(line);
 	del_prompt(prompt, free_mini);
 }

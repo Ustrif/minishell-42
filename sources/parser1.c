@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 11:01:10 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/02 00:35:45 by codespace        ###   ########.fr       */
+/*   Updated: 2025/07/02 02:20:23 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ void	*cleanup(t_mini *mini, char **full_cmd, t_list **cmds)
 
 void	*job(t_token **tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
 {
+	char	*line;
+
 	if ((*tokens)->type == T_WORD)
 	{
 		*full_cmd = get_swords(*full_cmd, (*tokens)->value);
@@ -33,7 +35,9 @@ void	*job(t_token **tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
 	}
 	else if ((*tokens)->type == T_REDIR_IN)
 	{
-		(*mini)->infilec = ft_strdup((*tokens)->next->value);
+		line = ft_strdup((*tokens)->next->value);
+		(*mini)->infilec = get_swords((*mini)->infilec, line);
+		free(line);
 		if ((*mini)->infilec == NULL)
 		{
 			perror((*tokens)->next->value);
@@ -46,9 +50,13 @@ void	*job(t_token **tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
 
 void	*job1(t_token **tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
 {
+	char	*line;
+
 	if ((*tokens)->type == T_REDIR_OUT)
 	{
-		(*mini)->outfilec = ft_strdup((*tokens)->next->value);
+		line = ft_strdup((*tokens)->next->value);
+		(*mini)->outfilec = get_swords((*mini)->outfilec, line);
+		free(line);
 		if ((*mini)->outfilec == NULL)
 		{
 			perror((*tokens)->next->value);
@@ -58,7 +66,9 @@ void	*job1(t_token **tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
 	}
 	else if ((*tokens)->type == T_HEREDOC)
 	{
-		(*mini)->heredoc = ft_strdup((*tokens)->value);
+		line = ft_strdup((*tokens)->value);
+		(*mini)->heredoc = get_swords((*mini)->heredoc, line);
+		free(line);
 		if ((*mini)->heredoc == NULL)
 		{
 			perror((*tokens)->next->value);
@@ -72,6 +82,7 @@ void	*job1(t_token **tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
 void	*job2(t_token **tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
 {
 	t_list	*node;
+	char	*line;
 
 	if ((*tokens)->type == T_PIPE)
 	{
@@ -87,7 +98,9 @@ void	*job2(t_token **tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
 	}
 	else if ((*tokens)->type == T_REDIR_APPEND)
 	{
-		(*mini)->appendfilec = ft_strdup((*tokens)->next->value);
+		line = ft_strdup((*tokens)->next->value);
+		(*mini)->appendfilec = get_swords((*mini)->appendfilec, line);
+		free(line);
 		if ((*mini)->appendfilec == NULL)
 			return (perror((*tokens)->next->value),
 				cleanup(*mini, *full_cmd, cmds));

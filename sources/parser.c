@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 23:05:10 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/02 00:38:26 by codespace        ###   ########.fr       */
+/*   Updated: 2025/07/02 02:13:17 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,9 @@ void	free_mini(void *m)
 		close(mini->infile);
 	if (mini->outfile != STDOUT_FILENO)
 		close(mini->outfile);
-	free(mini->appendfilec);
-	free(mini->heredoc);
-	free(mini->infilec);
-	free(mini->outfilec);
+	free_all(mini->appendfilec);
+	free_all(mini->heredoc);
+	free_all(mini->infilec);
+	free_all(mini->outfilec);
 	free(mini);
 }
