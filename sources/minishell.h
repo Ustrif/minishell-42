@@ -157,5 +157,6 @@ void	ft_rediradd_back(t_redir **lst, t_redir *new);
 void	ft_redirclear(t_redir **lst);
 int		is_builtin(char **args);
 int		exec_builtin(t_mini *mini, t_env **env_list);
+void	signal_handler(int sig);
 
 #endif

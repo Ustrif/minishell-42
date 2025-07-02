@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 03:04:26 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/02 08:36:55 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/02 09:21:59 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ int setup_redirections(t_mini *cmd)
     t_redir *r = cmd->redir;
     int      fd;
 
-    signal(SIGINT, SIG_DFL);
     while (r)
     {
         if (r->type == R_IN)
@@ -167,9 +166,7 @@ void execute_pipeline(t_promp *promp)
         }
         if (pid == 0)
         {
-            // Child process
-
-            // Connect pipes
+            signal(SIGINT, SIG_DFL);
             if (i > 0)
             {
                 dup2(pipes[i - 1][0], STDIN_FILENO);

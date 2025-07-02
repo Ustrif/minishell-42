@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 12:51:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/02 05:23:03 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/02 09:22:30 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,6 @@ void	signal_handler(int sig)
 		rl_on_new_line();
 		rl_redisplay();
 	}
-	if (sig == SIGQUIT)
-		return ;
 }
 
 int	main(int ac, char **argc, char **env)
@@ -60,7 +58,7 @@ int	main(int ac, char **argc, char **env)
 	if (!env_list)
 		return (free(fenv), 1);
 	signal(SIGINT, signal_handler);
-	signal(SIGQUIT, signal_handler);
+	signal(SIGQUIT, SIG_IGN);
 	get_real_path(*env, fenv);
 	get_env_value(env_list, NULL);
 	while (1)
@@ -69,6 +67,12 @@ int	main(int ac, char **argc, char **env)
 		if (!line)
 			break ;
 		run(line, fenv, env_list);
+		if (g_status == 130)
+		{
+			rl_replace_line("", 0);
+			rl_on_new_line();
+			rl_redisplay();
+		}
 		add_history(line);
 		free(line);
 	}
