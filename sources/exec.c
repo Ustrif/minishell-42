@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 03:04:26 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/02 07:13:16 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/02 08:09:01 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void execute_cmd(t_mini *cmd, char **envp)
 	exit(1);
 }
 
-void setup_redirections(t_mini *cmd)
+int setup_redirections(t_mini *cmd)
 {
     t_redir *r = cmd->redir;
     int      fd;
@@ -61,7 +61,10 @@ void setup_redirections(t_mini *cmd)
             fd = open(r->target, O_CREAT|O_APPEND|O_WRONLY, 0644);
 
         if (fd < 0)
-            perror(r->target), exit(1);
+        {
+            perror(r->target);
+            return (1);
+        }
 
         if (r->type == R_IN || r->type == R_HEREDOC)
             dup2(fd, STDIN_FILENO);
@@ -71,6 +74,7 @@ void setup_redirections(t_mini *cmd)
         close(fd);
         r = r->next;
     }
+    return (0); // success
 }
 
 void execute_pipeline(t_promp *promp)
@@ -79,43 +83,79 @@ void execute_pipeline(t_promp *promp)
     t_list *node  = promp->cmds;
     t_mini **arr;
     pid_t  *pids;
+    int   **pipes;
     int      i;
 
+    // Count commands
     while (node)
     {
         count++;
         node = node->next;
     }
+    if (count == 0)
+        return;
+
     arr  = malloc(sizeof(t_mini*) * count);
     pids = malloc(sizeof(pid_t)    * count);
-    if (!arr || !pids)
+    pipes = malloc(sizeof(int*) * (count - 1));
+    if (!arr || !pids || (count > 1 && !pipes))
+    {
+        free(arr); free(pids); free(pipes);
         return;
+    }
+
     node = promp->cmds;
     for (i = 0; i < count; i++)
     {
         arr[i] = node->content;
         node = node->next;
     }
+
     if (count == 1 && is_builtin(arr[0]->full_cmd))
     {
+        int saved_stdin = dup(STDIN_FILENO);
+        int saved_stdout = dup(STDOUT_FILENO);
+
+        int redir_status = setup_redirections(arr[0]);
+        if (redir_status)
+        {
+            *(promp->err_code) = 1;
+            dup2(saved_stdin, STDIN_FILENO);
+            dup2(saved_stdout, STDOUT_FILENO);
+            close(saved_stdin);
+            close(saved_stdout);
+            free(arr);
+            free(pids);
+            free(pipes);
+            return;
+        }
         *(promp->err_code) = exec_builtin(arr[0], &promp->tenv);
+
+        dup2(saved_stdin, STDIN_FILENO);
+        dup2(saved_stdout, STDOUT_FILENO);
+        close(saved_stdin);
+        close(saved_stdout);
         free(arr);
         free(pids);
-        return ;
+        free(pipes);
+        return;
     }
-    // 2) Bütün pipe’ları aç (count-1 tane)
-    int pipes[count - 1][2];
+
+    // Create pipes
     for (i = 0; i < count - 1; i++)
     {
-        if (pipe(pipes[i]) < 0)
+        pipes[i] = malloc(sizeof(int) * 2);
+        if (!pipes[i] || pipe(pipes[i]) < 0)
         {
             perror("pipe");
+            for (int j = 0; j <= i; j++) free(pipes[j]);
+            free(arr); free(pids); free(pipes);
             exit(1);
         }
     }
 
-    // 3) Sağdan sola fork
-    for (i = count - 1; i >= 0; i--)
+    // Fork children
+    for (i = 0; i < count; i++)
     {
         pid_t pid = fork();
         if (pid < 0)
@@ -125,62 +165,62 @@ void execute_pipeline(t_promp *promp)
         }
         if (pid == 0)
         {
-            // --- CHILD ---
+            // Child process
 
-            // a) PIPE’ları bağla
-            signal(SIGPIPE, SIG_IGN);
-            if (i < count - 1)
-            {
-                // stdout → sağdaki komutun okuyacağı pipe’a
-                dup2(pipes[i][1], STDOUT_FILENO);
-            }
+            // Connect pipes
             if (i > 0)
             {
-                // stdin ← soldaki komutun yazdığı pipe’dan
                 dup2(pipes[i - 1][0], STDIN_FILENO);
             }
-            // artık pipe fd’leri gereksiz
+            if (i < count - 1)
+            {
+                dup2(pipes[i][1], STDOUT_FILENO);
+            }
+            // Close all pipe fds in child
             for (int j = 0; j < count - 1; j++)
             {
                 close(pipes[j][0]);
                 close(pipes[j][1]);
             }
+        
+            if (setup_redirections(arr[i]))
+            {
+                exit(1); // Redirection error
+            }
 
-            // b) SONRA redir’ları kur (<, >, >>, heredoc vs.)
-            setup_redirections(arr[i]);
-
-			if (is_builtin(arr[i]->full_cmd))
+            if (is_builtin(arr[i]->full_cmd))
             {
                 int ret = exec_builtin(arr[i], &promp->tenv);
                 exit(ret);
             }
-            // c) exec
             execute_cmd(arr[i], promp->envp);
-            // hata olursa execute_cmd içinde exit() edilir
+            exit(1); // Should not reach here
         }
-        // PARENT:
         pids[i] = pid;
     }
 
-    // 4) PARENT: pipe’ları kapat
+    // Parent closes all pipe fds
     for (i = 0; i < count - 1; i++)
     {
         close(pipes[i][0]);
         close(pipes[i][1]);
+        free(pipes[i]);
     }
-
-    // 5) Tüm CHILD’ları bekle, kodu son komuta göre ayarla
+    free(pipes);
+    for (i = 0; i < count; i++)
     {
-        int status = 0;
-        for (i = 0; i < count; i++)
-            waitpid(pids[i], &status, 0);
-
-        if (WIFEXITED(status))
-            *(promp->err_code) = WEXITSTATUS(status);
-        else
-            *(promp->err_code) = 128 + WTERMSIG(status);
+        int wstatus;
+        waitpid(pids[i], &wstatus, 0);
+        if (i == count - 1)
+        {
+            if (WIFEXITED(wstatus))
+                *(promp->err_code) = WEXITSTATUS(wstatus);
+            else if (WIFSIGNALED(wstatus))
+                *(promp->err_code) = 128 + WTERMSIG(wstatus);
+        }
     }
 
     free(arr);
     free(pids);
 }
+// ...existing code...
