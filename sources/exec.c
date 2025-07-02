@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: beinan <beinan@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 14:01:38 by codespace         #+#    #+#             */
-/*   Updated: 2025/07/01 19:45:05 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/02 03:48:14 by beinan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,276 +120,166 @@ int	isdirectory(char **full_path)
 	}
 	return (0);
 }
+#include "minishell.h"
 
-void	child_exec(t_mini *mini, char **envp, int prev_in, int pipe_out)
-{
-	// Restore default signal handling in child processes
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
-	
-	// Set up input redirection
-	if (mini->infile != STDIN_FILENO)
-	{
-		if (dup2(mini->infile, STDIN_FILENO) == -1)
-		{
-			perror("dup2");
-			exit(1);
-		}
-		close(mini->infile);
-	}
-	else if (prev_in != -1)
-	{
-		if (dup2(prev_in, STDIN_FILENO) == -1)
-		{
-			perror("dup2");
-			exit(1);
-		}
-		close(prev_in);
-	}
-	
-	// Set up output redirection
-	if (mini->outfile != STDOUT_FILENO)
-	{
-		if (dup2(mini->outfile, STDOUT_FILENO) == -1)
-		{
-			perror("dup2");
-			exit(1);
-		}
-		close(mini->outfile);
-	}
-	else if (pipe_out != -1)
-	{
-		if (dup2(pipe_out, STDOUT_FILENO) == -1)
-		{
-			perror("dup2");
-			exit(1);
-		}
-		close(pipe_out);
-	}
-	
-	// Handle empty command
-	if (!mini->full_cmd || !mini->full_cmd[0])
-		exit(0);
-	
-	// Handle command not found
-	if (!mini->full_path)
-	{
-		ft_putstr_fd("minishell: ", STDERR_FILENO);
-		ft_putstr_fd(mini->full_cmd[0], STDERR_FILENO);
-		ft_putstr_fd(": command not found\n", STDERR_FILENO);
-		exit(127);
-	}
-	if (isdirectory(mini->full_cmd))
-		exit(126);
-	if (execve(mini->full_path, mini->full_cmd, envp) == -1)
-	{
-		perror("minishell");
-		if (errno == EACCES || errno == ENOTDIR || errno == ENOEXEC)
-			exit(126);
-		else if (errno == ENOENT)
-			exit(127);
-		else
-			exit(1);
-	}
-}
-
-static int	count_commands(t_list *cmds)
-{
-	int count = 0;
-	while (cmds)
-	{
-		count++;
-		cmds = cmds->next;
-	}
-	return (count);
-}
-
-static int	is_single_builtin(t_promp *prompt)
-{
-	t_list *cmds = prompt->cmds;
-	t_mini *mini;
-	
-	// Check if there's only one command and it's a builtin
-	if (!cmds || cmds->next)
-		return (0);
-	
-	mini = (t_mini *)cmds->content;
-	return (is_builtin(mini->full_cmd));
-}
-
+static void	handle_pipes(int **pipes, int cmd_count);
+static void	execute_single_builtin(t_promp *prompt, t_mini *mini);
+static void	execute_pipeline(t_promp *prompt, int cmd_count);
+static void	cleanup_pipes(int **pipes, int cmd_count);
+static void	wait_for_children(pid_t *pids, int cmd_count, int *err_code);
 
 void	execute_cmds(t_promp *prompt)
 {
-	t_list	*curr;
-	int		**pipes;
-	pid_t	*pids;
 	int		cmd_count;
-	int		i;
-	int		j;
-	int		status;
-	t_mini	*mini;
-	
+	t_list	*cmds;
+
 	if (!prompt || !prompt->cmds)
 		return ;
-	
-	cmd_count = count_commands(prompt->cmds);
-		if (is_single_builtin(prompt))
+	cmd_count = ft_lstsize(prompt->cmds);
+	cmds = prompt->cmds;
+	if (cmd_count == 1 && is_builtin(((t_mini *)cmds->content)->full_cmd))
+		execute_single_builtin(prompt, (t_mini *)cmds->content);
+	else
+		execute_pipeline(prompt, cmd_count);
+}
+
+static void	execute_single_builtin(t_promp *prompt, t_mini *mini)
+{
+	int	saved_stdin;
+	int	saved_stdout;
+
+	saved_stdin = dup(STDIN_FILENO);
+	saved_stdout = dup(STDOUT_FILENO);
+	if (mini->infile != STDIN_FILENO)
 	{
-		mini = (t_mini *)prompt->cmds->content;
-		
-		// Save and redirect stdin/stdout if needed
-		int saved_stdin = -1, saved_stdout = -1;
-		
-		if (mini->infile != STDIN_FILENO)
-		{
-			saved_stdin = dup(STDIN_FILENO);
-			dup2(mini->infile, STDIN_FILENO);
-			close(mini->infile);
-		}
-		
-		if (mini->outfile != STDOUT_FILENO)
-		{
-			saved_stdout = dup(STDOUT_FILENO);
-			dup2(mini->outfile, STDOUT_FILENO);
-			close(mini->outfile);
-		}
-		
-		*prompt->err_code = exec_builtin(mini, &prompt->tenv);
-		
-		// Restore stdin/stdout
-		if (saved_stdin != -1)
-		{
-			dup2(saved_stdin, STDIN_FILENO);
-			close(saved_stdin);
-		}
-		if (saved_stdout != -1)
-		{
-			dup2(saved_stdout, STDOUT_FILENO);
-			close(saved_stdout);
-		}
-		return ;
+		dup2(mini->infile, STDIN_FILENO);
+		close(mini->infile);
 	}
-	
-	// Allocate arrays for pipes and pids
+	if (mini->outfile != STDOUT_FILENO)
+	{
+		dup2(mini->outfile, STDOUT_FILENO);
+		close(mini->outfile);
+	}
+	*prompt->err_code = exec_builtin(mini, &prompt->tenv);
+	dup2(saved_stdin, STDIN_FILENO);
+	dup2(saved_stdout, STDOUT_FILENO);
+	close(saved_stdin);
+	close(saved_stdout);
+}
+
+static void	execute_pipeline(t_promp *prompt, int cmd_count)
+{
+	int		**pipes;
+	pid_t	*pids;
+	t_list	*curr;
+	int		i;
+
 	pipes = malloc(sizeof(int *) * (cmd_count - 1));
 	pids = malloc(sizeof(pid_t) * cmd_count);
-	
 	if (!pipes || !pids)
+		return (free(pipes), free(pids));
+	handle_pipes(pipes, cmd_count);
+	i = -1;
+	curr = prompt->cmds;
+	while (++i < cmd_count && curr)
 	{
-		if (pipes) free(pipes);
-		if (pids) free(pids);
-		return ;
+		pids[i] = fork();
+		if (pids[i] == 0)
+			child_process(prompt, (t_mini *)curr->content, pipes, i, cmd_count);
+		else if (pids[i] < 0)
+			break ;
+		curr = curr->next;
 	}
-	
-	// Create all pipes
-	for (i = 0; i < cmd_count - 1; i++)
+	cleanup_pipes(pipes, cmd_count);
+	wait_for_children(pids, cmd_count, prompt->err_code);
+	free(pids);
+	free(pipes);
+}
+
+void	child_process(t_promp *prompt, t_mini *mini, int **pipes, int i, int cmd_count)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	if (i > 0)
+		dup2(pipes[i - 1][0], STDIN_FILENO);
+	if (i < cmd_count - 1)
+		dup2(pipes[i][1], STDOUT_FILENO);
+	cleanup_pipes(pipes, cmd_count);
+	if (mini->infile != STDIN_FILENO)
+	{
+		dup2(mini->infile, STDIN_FILENO);
+		close(mini->infile);
+	}
+	if (mini->outfile != STDOUT_FILENO)
+	{
+		dup2(mini->outfile, STDOUT_FILENO);
+		close(mini->outfile);
+	}
+	if (is_builtin(mini->full_cmd))
+		exit(exec_builtin(mini, &prompt->tenv));
+	else if (mini->full_path && access(mini->full_path, X_OK) == 0)
+		execve(mini->full_path, mini->full_cmd, prompt->envp);
+	ft_putstr_fd("minishell: ", STDERR_FILENO);
+	ft_putstr_fd(mini->full_cmd[0], STDERR_FILENO);
+	if (!mini->full_path)
+		ft_putstr_fd(": command not found\n", STDERR_FILENO);
+	else
+		ft_putstr_fd(": Permission denied\n", STDERR_FILENO);
+	exit(mini->full_path ? 126 : 127);
+}
+
+static void	handle_pipes(int **pipes, int cmd_count)
+{
+	int	i;
+
+	i = -1;
+	while (++i < cmd_count - 1)
 	{
 		pipes[i] = malloc(sizeof(int) * 2);
 		if (!pipes[i] || pipe(pipes[i]) == -1)
 		{
-			perror("pipe");
-			// Clean up already created pipes
-			for (j = 0; j < i; j++)
+			perror("minishell");
+			while (--i >= 0)
 			{
-				close(pipes[j][0]);
-				close(pipes[j][1]);
-				free(pipes[j]);
+				close(pipes[i][0]);
+				close(pipes[i][1]);
+				free(pipes[i]);
 			}
-			free(pipes);
-			free(pids);
-			return ;
+			exit(1);
 		}
 	}
-	
-	// Fork all processes
-	curr = prompt->cmds;
-	for (i = 0; i < cmd_count; i++)
-	{
-		mini = (t_mini *)curr->content;
-		
-		pids[i] = fork();
-		if (pids[i] == -1)
-		{
-			perror("fork");
-			// Kill already forked processes
-			for (j = 0; j < i; j++)
-				kill(pids[j], SIGTERM);
-			// Clean up pipes
-			for (j = 0; j < cmd_count - 1; j++)
-			{
-				close(pipes[j][0]);
-				close(pipes[j][1]);
-				free(pipes[j]);
-			}
-			free(pipes);
-			free(pids);
-			return ;
-		}
-		else if (pids[i] == 0)
-		{
-			// Child process
-			// Set up input
-			if (i > 0)
-			{
-				dup2(pipes[i - 1][0], STDIN_FILENO);
-			}
-			
-			// Set up output
-			if (i < cmd_count - 1)
-			{
-				dup2(pipes[i][1], STDOUT_FILENO);
-			}
-			
-			// Close all pipe file descriptors
-			for (j = 0; j < cmd_count - 1; j++)
-			{
-				close(pipes[j][0]);
-				close(pipes[j][1]);
-			}
-			
-			// Execute command
-			if (is_builtin(mini->full_cmd))
-			{
-				// Handle file redirections for builtins
-				if (mini->infile != STDIN_FILENO && i == 0)
-					dup2(mini->infile, STDIN_FILENO);
-				if (mini->outfile != STDOUT_FILENO && i == cmd_count - 1)
-					dup2(mini->outfile, STDOUT_FILENO);
-				
-				exit(exec_builtin(mini, &prompt->tenv));
-			}
-			else
-			{
-				child_exec(mini, prompt->envp, -1, -1);
-			}
-		}
-		
-		curr = curr->next;
-	}
-	
-	// Close all pipes in parent
-	for (i = 0; i < cmd_count - 1; i++)
+}
+
+static void	cleanup_pipes(int **pipes, int cmd_count)
+{
+	int	i;
+
+	i = -1;
+	while (++i < cmd_count - 1)
 	{
 		close(pipes[i][0]);
 		close(pipes[i][1]);
 		free(pipes[i]);
 	}
-	free(pipes);
-	
-	// Wait for all children
-	for (i = 0; i < cmd_count; i++)
+}
+
+static void	wait_for_children(pid_t *pids, int cmd_count, int *err_code)
+{
+	int	status;
+	int	i;
+
+	i = -1;
+	while (++i < cmd_count)
 	{
 		waitpid(pids[i], &status, 0);
-		if (i == cmd_count - 1)  // Last command sets the exit status
+		if (i == cmd_count - 1)
 		{
 			if (WIFEXITED(status))
-				*prompt->err_code = WEXITSTATUS(status);
+				*err_code = WEXITSTATUS(status);
 			else if (WIFSIGNALED(status))
-				*prompt->err_code = 128 + WTERMSIG(status);
+				*err_code = 128 + WTERMSIG(status);
 		}
 	}
-	
-	free(pids);
 }
 
 /* 

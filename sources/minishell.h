@@ -23,7 +23,7 @@
 # include <fcntl.h>
 # include <sys/wait.h>
 # include <errno.h>
-#include <sys/stat.h>
+# include <sys/stat.h>
 
 typedef enum e_token_type
 {
@@ -99,6 +99,7 @@ void	del_prompt(t_promp *prompt, void (*del)(void *));
 t_promp	*get_prompt(t_list *cmds, char **env);
 int		get_pwd();
 int		get_cd(char **args);
+void	child_process(t_promp *prompt, t_mini *mini, int **pipes, int i, int cmd_count);
 int		ft_echo(char **args);
 int		ft_env(char **args, t_env *env_list);
 t_env	*create_env(const char *env_str);
