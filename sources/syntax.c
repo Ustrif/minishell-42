@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/30 12:31:33 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/01 16:37:55 by codespace        ###   ########.fr       */
+/*   Created: 2025/07/02 05:26:55 by raydogmu          #+#    #+#             */
+/*   Updated: 2025/07/02 05:36:30 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,67 +38,39 @@ static int	is_redirection(int type)
 		|| type == T_REDIR_APPEND || type == T_HEREDOC);
 }
 
-int	check_syntax(t_token *head)
+int	func(t_token *current)
 {
-	if (!head)
-		return (1);
-	if (head->type == T_PIPE)
-		return (print_syntax_error(head));
-	while (head)
-	{
-		if (head->type == T_PIPE
-			&& (!head->next || is_operator(head->next->type)))
-			return (print_syntax_error(head->next));
-		if (is_redirection(head->type)
-			&& (!head->next || is_operator(head->next->type)))
-			return (print_syntax_error(head->next));
-		head = head->next;
-	}
+	if (!current->next)
+		return (print_syntax_error(NULL));
+	if (is_operator(current->next->type))
+		return (print_syntax_error(current->next));
 	return (0);
 }
 
-/*
 int	check_syntax(t_token *head)
 {
-	if (!head)
+	t_token	*current;
+
+	current = head;
+	if (!current)
 		return (1);
-	if (is_operator(head->type) && head->type != T_HEREDOC)
+	if (current->type == T_PIPE)
+		return (print_syntax_error(current));
+	while (current)
 	{
-		ft_putstr_fd("minishell: syntax error near unexpected token '", 2);
-		ft_putstr_fd(head->value, 2);
-		ft_putendl_fd("'", 2);
-		return (1);
-	}
-	while (head)
-	{
-		if (head->type == T_PIPE && (!head->next || is_operator(head->next->type)))
+		if (current->type == T_PIPE)
 		{
-			ft_putstr_fd("minishell: syntax error near unexpected token '", 2);
-			if (!head->next)
-				ft_putendl_fd("newline'", 2);
-			else
-			{
-				ft_putstr_fd(head->next->value, 2);
-				ft_putendl_fd("'", 2);
-			}
-			return (1);
+			if (!current->next)
+				return (print_syntax_error(NULL));
+			if (current->next->type == T_PIPE)
+				return (print_syntax_error(current->next));
 		}
-		if ((head->type == T_REDIR_IN || head->type == T_REDIR_OUT
-			|| head->type == T_REDIR_APPEND || head->type == T_HEREDOC)
-			&& (!head->next || is_operator(head->next->type)))
+		else if (is_redirection(current->type))
 		{
-			ft_putstr_fd("minishell: syntax error near unexpected token '", 2);
-			if (!head->next)
-				ft_putendl_fd("newline'", 2);
-			else
-			{
-				ft_putstr_fd(head->next->value, 2);
-				ft_putendl_fd("'", 2);
-			}
-			return (1);
+			if (func(current))
+				return (1);
 		}
-		head = head->next;
+		current = current->next;
 	}
 	return (0);
 }
-*/

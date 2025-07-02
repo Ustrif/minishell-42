@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 12:51:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/01 19:50:20 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/02 05:23:03 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ void	run(char *s, char **fenv, t_env *tenv)
 		return ;
 	prompt->tenv = tenv;
 	prompt->err_code = &err_code;
-	execute_cmds(prompt);
+	execute_pipeline(prompt);
+	free(line);
 	del_prompt(prompt, free_mini);
 }
 
@@ -38,17 +39,12 @@ void	signal_handler(int sig)
 	{
 		g_status = 130;
 		write(1, "\n", 1);
-		//rl_replace_line("", 0); ctrl -c ve cat ctrl -c
+		rl_replace_line("", 0);
 		rl_on_new_line();
 		rl_redisplay();
 	}
 	if (sig == SIGQUIT)
-	{
-		/*rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();*/
-		return ; // soruna sebep oluyor. ust taraf.
-	}
+		return ;
 }
 
 int	main(int ac, char **argc, char **env)

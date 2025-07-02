@@ -6,13 +6,11 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 09:20:40 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/29 12:59:16 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/02 05:24:22 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-extern int	g_status;
 
 void	write_line(char *s, int fd)
 {
@@ -20,13 +18,11 @@ void	write_line(char *s, int fd)
 	write(fd, "\n", 1);
 }
 
-int	open_heredoc(t_token *tok)
+int	open_heredoc(char *delim)
 {
-	char	*delim;
 	int		fd[2];
 	char	*line;
 
-	delim = tok->next->value;
 	if (pipe(fd) == -1)
 		return (-1);
 	while (1)

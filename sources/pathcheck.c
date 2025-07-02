@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pathcheck.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: beinan <beinan@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 17:41:00 by beinan            #+#    #+#             */
-/*   Updated: 2025/04/30 20:22:47 by beinan           ###   ########.fr       */
+/*   Updated: 2025/07/02 02:15:31 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ void	free_all(char **str)
 	int	i;
 
 	i = 0;
+	if (!str)
+		return ;
 	while (str[i])
 	{
 		free(str[i]);

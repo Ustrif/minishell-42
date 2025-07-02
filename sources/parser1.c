@@ -6,123 +6,116 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 11:01:10 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/30 11:20:34 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/02 04:25:27 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	*cleanup(t_mini *mini, char **full_cmd, t_list **cmds)
+static int append_redir(t_redir **list, t_redir_type type, const char *target)
 {
-	if (full_cmd)
-		free_all(full_cmd);
-	if (mini)
-		free_mini(mini);
-	if (cmds)
-		ft_lstclear(cmds, free_mini);
-	return (NULL);
+    t_redir *new = malloc(sizeof(t_redir));
+    if (!new) return 0;
+    new->type = type;
+    new->target = ft_strdup(target);
+    if (!new->target) { free(new); return 0; }
+    new->next = NULL;
+    if (*list == NULL)
+        *list = new;
+    else
+    {
+        t_redir *cur = *list;
+        while (cur->next)
+            cur = cur->next;
+        cur->next = new;
+    }
+    return 1;
 }
 
-void	*job(t_token **tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
+// cleanup helper
+void    *cleanup(t_mini *mini, char **full_cmd, t_list **cmds)
 {
-	if ((*tokens)->type == T_WORD)
-	{
-		*full_cmd = get_swords(*full_cmd, (*tokens)->value);
-		if (!(*full_cmd))
-			return (cleanup(*mini, *full_cmd, cmds));
-	}
-	else if ((*tokens)->type == T_REDIR_IN)
-	{
-		(*mini)->infile = open((*tokens)->next->value, O_RDONLY);
-		if ((*mini)->infile < 0)
-		{
-			perror((*tokens)->next->value);
-			return (cleanup(*mini, *full_cmd, cmds));
-		}
-		(*tokens) = (*tokens)->next;
-	}
-	return ((void *)1);
+    if (full_cmd)
+        free_all(full_cmd);
+    if (mini)
+    {
+        // free redir list
+        t_redir *r = mini->redir;
+        while (r)
+        {
+            t_redir *tmp = r->next;
+            free(r->target);
+            free(r);
+            r = tmp;
+        }
+        free(mini);
+    }
+    if (cmds)
+        ft_lstclear(cmds, free_mini);
+    return NULL;
 }
 
-void	*job1(t_token **tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
+t_list  *get_minis(t_token *tokens)
 {
-	if ((*tokens)->type == T_REDIR_OUT)
-	{
-		(*mini)->outfile = open((*tokens)->next->value,
-				O_CREAT | O_WRONLY | O_TRUNC, 0644);
-		if ((*mini)->outfile < 0)
-		{
-			perror((*tokens)->next->value);
-			return (cleanup(*mini, *full_cmd, cmds));
-		}
-		*tokens = (*tokens)->next;
-	}
-	else if ((*tokens)->type == T_HEREDOC)
-	{
-		(*mini)->infile = open_heredoc(*tokens);
-		if ((*mini)->infile < 0)
-		{
-			perror((*tokens)->next->value);
-			return (cleanup(*mini, *full_cmd, cmds));
-		}
-		*tokens = (*tokens)->next;
-	}
-	return ((void *)1);
+    t_list *cmds = NULL;
+    t_mini *mini = init_mini();
+    char   **full_cmd = NULL;
+    t_list *node;
+
+    if (!mini)
+        return NULL;
+    while (tokens)
+    {
+        if (tokens->type == T_WORD)
+        {
+            full_cmd = get_swords(full_cmd, tokens->value);
+            if (!full_cmd)
+                return cleanup(mini, full_cmd, &cmds);
+        }
+        else if (tokens->type == T_REDIR_IN)
+        {
+            if (!append_redir(&mini->redir, R_IN, tokens->next->value))
+                return cleanup(mini, full_cmd, &cmds);
+            tokens = tokens->next;
+        }
+        else if (tokens->type == T_REDIR_OUT)
+        {
+            if (!append_redir(&mini->redir, R_OUT, tokens->next->value))
+                return cleanup(mini, full_cmd, &cmds);
+            tokens = tokens->next;
+        }
+        else if (tokens->type == T_REDIR_APPEND)
+        {
+            if (!append_redir(&mini->redir, R_APPEND, tokens->next->value))
+                return cleanup(mini, full_cmd, &cmds);
+            tokens = tokens->next;
+        }
+        else if (tokens->type == T_HEREDOC)
+        {
+            if (!append_redir(&mini->redir, R_HEREDOC, tokens->next->value))
+                return cleanup(mini, full_cmd, &cmds);
+            tokens = tokens->next;
+        }
+        else if (tokens->type == T_PIPE)
+        {
+            mini->full_cmd = full_cmd;
+            node = ft_lstnew(mini);
+            if (!node)
+                return cleanup(mini, full_cmd, &cmds);
+            ft_lstadd_back(&cmds, node);
+            mini = init_mini();
+            full_cmd = NULL;
+            if (!mini)
+                return cleanup(mini, full_cmd, &cmds);
+        }
+        tokens = tokens->next;
+    }
+    // add last command
+    mini->full_cmd = full_cmd;
+    node = ft_lstnew(mini);
+    if (!node)
+        return cleanup(mini, full_cmd, &cmds);
+    ft_lstadd_back(&cmds, node);
+    return cmds;
 }
 
-void	*job2(t_token **tokens, char ***full_cmd, t_mini **mini, t_list **cmds)
-{
-	t_list	*node;
-
-	if ((*tokens)->type == T_PIPE)
-	{
-		(*mini)->full_cmd = *full_cmd;
-		node = ft_lstnew(*mini);
-		if (!node)
-			return (cleanup(*mini, *full_cmd, cmds));
-		ft_lstadd_back(cmds, node);
-		(*mini) = init_mini();
-		if (!(*mini))
-			return (cleanup(*mini, *full_cmd, cmds));
-		*full_cmd = NULL;
-	}
-	else if ((*tokens)->type == T_REDIR_APPEND)
-	{
-		(*mini)->outfile = open((*tokens)->next->value,
-				O_CREAT | O_WRONLY | O_APPEND, 0644);
-		if ((*mini)->outfile < 0)
-			return (perror((*tokens)->next->value),
-				cleanup(*mini, *full_cmd, cmds));
-		*tokens = (*tokens)->next;
-	}
-	return ((void *)1);
-}
-
-t_list	*get_minis(t_token *tokens)
-{
-	t_list	*cmds;
-	t_mini	*mini;
-	char	**full_cmd;
-	t_list	*node;
-
-	cmds = NULL;
-	mini = init_mini();
-	full_cmd = NULL;
-	node = NULL;
-	if (!mini)
-		return (NULL);
-	while (tokens)
-	{
-		if (job(&tokens, &full_cmd, &mini, &cmds) == NULL
-			|| job1(&tokens, &full_cmd, &mini, &cmds) == NULL
-			|| job2(&tokens, &full_cmd, &mini, &cmds) == NULL)
-			return (NULL);
-		tokens = tokens->next;
-	}
-	mini->full_cmd = full_cmd;
-	node = ft_lstnew(mini);
-	if (!node)
-		return (cleanup(mini, full_cmd, &cmds));
-	ft_lstadd_back(&cmds, node);
-	return (cmds);
-}

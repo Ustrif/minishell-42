@@ -49,10 +49,26 @@ typedef struct s_token
 	struct s_token	*next;
 }				t_token;
 
+typedef enum e_redir_type
+{
+    R_IN,
+    R_OUT,
+    R_APPEND,
+    R_HEREDOC
+} t_redir_type;
+
+typedef struct s_redir
+{
+    t_redir_type     type;
+    char            *target;
+    struct s_redir  *next;
+} t_redir;
+
 typedef struct s_mini
 {
 	char	**full_cmd;
 	char	*full_path;
+	t_redir	*redir;
 	int		infile;
 	int		outfile;
 }	t_mini;
@@ -92,7 +108,7 @@ t_token	*get_classified_tokens(char	*line);
 t_token	*get_unqouted_tokens(t_token *head);
 char	**get_swords(char **words, char *word);
 void	free_mini(void *m);
-int		open_heredoc(t_token *tok);
+int		open_heredoc(char *delim);
 t_list	*get_minis(t_token *tokens);
 t_mini	*init_mini(void);
 void	del_prompt(t_promp *prompt, void (*del)(void *));
@@ -135,5 +151,9 @@ char	*get_env_value(t_env *env_list, const char *key);
 int		check_syntax(t_token *head);
 t_env	*init_env(char **envp);
 char	*get_expanded_data(const char *s, int err_code);
+void	execute_pipeline(t_promp *promp);
+t_redir	*ft_redirnnew(char *v, t_redir_type type);
+void	ft_rediradd_back(t_redir **lst, t_redir *new);
+void	ft_redirclear(t_redir **lst);
 
 #endif
