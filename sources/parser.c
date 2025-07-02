@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 23:05:10 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/24 12:47:15 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/02 00:38:26 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,10 @@ t_mini	*init_mini(void)
 		return (NULL);
 	new->full_cmd = NULL;
 	new->full_path = NULL;
+	new->appendfilec = NULL;
+	new->heredoc = NULL;
+	new->infilec = NULL;
+	new->outfilec = NULL;
 	new->infile = STDIN_FILENO;
 	new->outfile = STDOUT_FILENO;
 	return (new);
@@ -40,5 +44,9 @@ void	free_mini(void *m)
 		close(mini->infile);
 	if (mini->outfile != STDOUT_FILENO)
 		close(mini->outfile);
+	free(mini->appendfilec);
+	free(mini->heredoc);
+	free(mini->infilec);
+	free(mini->outfilec);
 	free(mini);
 }

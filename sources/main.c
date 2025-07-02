@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 12:51:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/01 19:50:20 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/02 00:51:40 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	run(char *s, char **fenv, t_env *tenv)
 		return ;
 	prompt->tenv = tenv;
 	prompt->err_code = &err_code;
-	execute_cmds(prompt);
+	free(line);
 	del_prompt(prompt, free_mini);
 }
 

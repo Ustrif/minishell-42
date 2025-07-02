@@ -23,7 +23,7 @@
 # include <fcntl.h>
 # include <sys/wait.h>
 # include <errno.h>
-#include <sys/stat.h>
+# include <sys/stat.h>
 
 typedef enum e_token_type
 {
@@ -53,6 +53,10 @@ typedef struct s_mini
 {
 	char	**full_cmd;
 	char	*full_path;
+	char	*infilec;
+	char	*outfilec;
+	char	*appendfilec;
+	char	*heredoc;
 	int		infile;
 	int		outfile;
 }	t_mini;
@@ -92,7 +96,7 @@ t_token	*get_classified_tokens(char	*line);
 t_token	*get_unqouted_tokens(t_token *head);
 char	**get_swords(char **words, char *word);
 void	free_mini(void *m);
-int		open_heredoc(t_token *tok);
+int		open_heredoc(char *delim);
 t_list	*get_minis(t_token *tokens);
 t_mini	*init_mini(void);
 void	del_prompt(t_promp *prompt, void (*del)(void *));
