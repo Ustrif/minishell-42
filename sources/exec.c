@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/26 14:01:38 by codespace         #+#    #+#             */
-/*   Updated: 2025/07/02 02:13:36 by codespace        ###   ########.fr       */
+/*   Created: 2025/07/02 03:04:26 by raydogmu          #+#    #+#             */
+/*   Updated: 2025/07/02 03:23:40 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ void execute_cmd(t_mini *cmd, char **envp)
 
 	if (!cmd->full_path)
 	{
-		fprintf(stderr, "minishell: command not found: %s\n", cmd->full_cmd[0]);
+		fprintf(stderr, "minishell: %s: command not found\n", cmd->full_cmd[0]);
 		exit(127);
 	}
 	if (stat(cmd->full_path, &sb) == -1)
@@ -187,11 +187,24 @@ void execute_pipeline(t_promp *promp)
     pid_t  *pids;
     int      i;
 
-    // 1) Linked‑list’i diziye çevir
     while (node)
     {
         count++;
         node = node->next;
+    }
+    t_mini *only = promp->cmds->content;
+    if (count == 1 && is_builtin(only->full_cmd))
+    {
+        setup_redirections(only);
+
+        if (ft_strcmp(only->full_cmd[0], "exit") == 0)
+        {
+            int code = exec_builtin(only, &promp->tenv);
+            exit(code);
+        }
+        int ret = exec_builtin(only, &promp->tenv);
+        *(promp->err_code) = ret;
+        return ;
     }
     arr  = malloc(sizeof(t_mini*) * count);
     pids = malloc(sizeof(pid_t)    * count);

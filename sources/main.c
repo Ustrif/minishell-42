@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 12:51:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/02 00:58:11 by codespace        ###   ########.fr       */
+/*   Updated: 2025/07/02 03:18:41 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	signal_handler(int sig)
 	{
 		g_status = 130;
 		write(1, "\n", 1);
-		//rl_replace_line("", 0); ctrl -c ve cat ctrl -c
+		rl_replace_line("", 0);
 		rl_on_new_line();
 		rl_redisplay();
 	}
