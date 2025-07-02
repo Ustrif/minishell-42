@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 03:04:26 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/02 03:23:40 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/02 04:56:22 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ void execute_cmd(t_mini *cmd, char **envp)
 	}
 	if (S_ISDIR(sb.st_mode))
 	{
-		fprintf(stderr, "minishell: %s: is a directory\n", cmd->full_path);
+		fprintf(stderr, "minishell: %s: Is a directory\n", cmd->full_path);
 		exit(126); // Bash bu durumda 126 döner
 	}
 	if (access(cmd->full_path, X_OK) != 0)
@@ -136,46 +136,30 @@ void execute_cmd(t_mini *cmd, char **envp)
 
 void setup_redirections(t_mini *cmd)
 {
-    int fd;
+    t_redir *r = cmd->redir;
+    int      fd;
 
-    // 1) HER infilec için sırayla:
-    for (int i = 0; cmd->infilec && cmd->infilec[i]; i++)
+    while (r)
     {
-        fd = open(cmd->infilec[i], O_RDONLY);
-        if (fd < 0) { perror(cmd->infilec[i]); exit(1); }
-        dup2(fd, STDIN_FILENO);
-        close(fd);
-    }
+        if (r->type == R_IN)
+            fd = open(r->target, O_RDONLY);
+        else if (r->type == R_HEREDOC)
+            fd = open_heredoc(r->target);
+        else if (r->type == R_OUT)
+            fd = open(r->target, O_CREAT|O_TRUNC|O_WRONLY, 0644);
+        else
+            fd = open(r->target, O_CREAT|O_APPEND|O_WRONLY, 0644);
 
-    // 2) HER heredoc için (geçici dosya adını cmd->heredoc[i] tutuyorsan):
-    for (int i = 0; cmd->heredoc && cmd->heredoc[i]; i++)
-    {
-        fd = open(cmd->heredoc[i], O_RDONLY);
-        if (fd < 0) { perror(cmd->heredoc[i]); exit(1); }
-        dup2(fd, STDIN_FILENO);
-        close(fd);
-    }
+        if (fd < 0)
+            perror(r->target), exit(1);
 
-    // 3) HER outfilec için sırayla (truncating):
-    for (int i = 0; cmd->outfilec && cmd->outfilec[i]; i++)
-    {
-        fd = open(cmd->outfilec[i],
-                  O_CREAT | O_TRUNC | O_WRONLY,
-                  0644);
-        if (fd < 0) { perror(cmd->outfilec[i]); exit(1); }
-        dup2(fd, STDOUT_FILENO);
-        close(fd);
-    }
+        if (r->type == R_IN || r->type == R_HEREDOC)
+            dup2(fd, STDIN_FILENO);
+        else
+            dup2(fd, STDOUT_FILENO);
 
-    // 4) HER appendfilec için sırayla (appending):
-    for (int i = 0; cmd->appendfilec && cmd->appendfilec[i]; i++)
-    {
-        fd = open(cmd->appendfilec[i],
-                  O_CREAT | O_APPEND | O_WRONLY,
-                  0644);
-        if (fd < 0) { perror(cmd->appendfilec[i]); exit(1); }
-        dup2(fd, STDOUT_FILENO);
         close(fd);
+        r = r->next;
     }
 }
 
@@ -193,7 +177,7 @@ void execute_pipeline(t_promp *promp)
         node = node->next;
     }
     t_mini *only = promp->cmds->content;
-    if (count == 1 && is_builtin(only->full_cmd))
+    if (count == 1 && is_builtin(only->full_cmd) && ft_strcmp(only->full_cmd[0], "exit") == 0)
     {
         setup_redirections(only);
 
@@ -242,6 +226,7 @@ void execute_pipeline(t_promp *promp)
             // --- CHILD ---
 
             // a) PIPE’ları bağla
+            signal(SIGPIPE, SIG_IGN);
             if (i < count - 1)
             {
                 // stdout → sağdaki komutun okuyacağı pipe’a
