@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 12:51:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/04 15:55:24 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/04 16:56:32 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ void	run(char *s, char **fenv, t_env *tenv)
 	prompt->tenv = tenv;
 	prompt->err_code = &err_code;
 	execute_pipeline(prompt);
+	if (err_code == 130 && !is_builtin(((t_mini *)prompt->cmds->content)->full_cmd))
+		write(1, "\n", 1);
 	free(line);
 	del_prompt(prompt, free_mini);
 	tcsetattr(STDIN_FILENO, TCSANOW, &saved);
