@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 03:04:26 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/04 16:50:50 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/04 17:36:00 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,14 @@ int setup_redirections(t_mini *cmd)
     return (0); // success
 }
 
+void    sig_hand(int signum)
+{
+    if (signum)
+    {
+        g_status = 130;
+    }
+}
+
 void execute_pipeline(t_promp *promp)
 {
     int     count = 0;
@@ -119,7 +127,7 @@ void execute_pipeline(t_promp *promp)
         int redir_status = setup_redirections(arr[0]);
         if (redir_status == -130)
         {
-            *(promp->err_code) = 130;
+            g_status = 130;
             dup2(saved_stdin, STDIN_FILENO);
             dup2(saved_stdout, STDOUT_FILENO);
             close(saved_stdin);
@@ -174,9 +182,9 @@ void execute_pipeline(t_promp *promp)
             perror("fork");
             exit(1);
         }
+        signal(SIGINT, sig_hand);
         if (pid == 0)
         {
-            signal(SIGINT, SIG_DFL);
             if (i > 0)
             {
                 dup2(pipes[i - 1][0], STDIN_FILENO);
