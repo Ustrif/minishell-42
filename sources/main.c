@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: raydogmu <raydogmu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 12:51:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/04 11:34:11 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/04 15:55:24 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <termios.h>
 
 int	g_status = 0;
 
@@ -19,10 +20,18 @@ void	run(char *s, char **fenv, t_env *tenv)
 	t_promp		*prompt;
 	static int	err_code = 0;
 	char		*line;
+	struct termios saved;
 
+	if (g_status == 130)
+	{
+		err_code = 130;
+		g_status = 0;
+	}
+    tcgetattr(STDIN_FILENO, &saved);
 	line = get_expanded_data(s, err_code);
 	if (basics(line, &err_code))
 		return ;
+	add_history(s);
 	signal(SIGINT, SIG_IGN);
 	prompt = get_full_promp(line, fenv, &err_code);
 	if (!prompt)
@@ -32,6 +41,7 @@ void	run(char *s, char **fenv, t_env *tenv)
 	execute_pipeline(prompt);
 	free(line);
 	del_prompt(prompt, free_mini);
+	tcsetattr(STDIN_FILENO, TCSANOW, &saved);
 }
 
 void	signal_handler(int sig)
@@ -60,6 +70,7 @@ int	main(int ac, char **argc, char **env)
 		return (free(fenv), 1);
 	get_real_path(*env, fenv);
 	get_env_value(env_list, NULL);
+	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
 		signal(SIGINT, signal_handler);
@@ -67,7 +78,6 @@ int	main(int ac, char **argc, char **env)
 		if (!line)
 			break ;
 		run(line, fenv, env_list);
-		add_history(line);
 		free(line);
 	}
 	rl_clear_history();

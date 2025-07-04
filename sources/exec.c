@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: raydogmu <raydogmu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 03:04:26 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/04 11:35:27 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/04 16:16:18 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,13 +60,11 @@ int setup_redirections(t_mini *cmd)
             fd = open(r->target, O_CREAT|O_TRUNC|O_WRONLY, 0644);
         else
             fd = open(r->target, O_CREAT|O_APPEND|O_WRONLY, 0644);
-
         if (fd < 0)
         {
             perror(r->target);
             return (1);
         }
-
         if (r->type == R_IN || r->type == R_HEREDOC)
             dup2(fd, STDIN_FILENO);
         else
@@ -130,7 +128,6 @@ void execute_pipeline(t_promp *promp)
             return;
         }
         *(promp->err_code) = exec_builtin(arr[0], &promp->tenv);
-
         dup2(saved_stdin, STDIN_FILENO);
         dup2(saved_stdout, STDOUT_FILENO);
         close(saved_stdin);
@@ -165,7 +162,7 @@ void execute_pipeline(t_promp *promp)
         }
         if (pid == 0)
         {
-            signal(SIGINT, SIG_DFL); // gecisi kapalı.
+            signal(SIGINT, SIG_DFL);
             if (i > 0)
             {
                 dup2(pipes[i - 1][0], STDIN_FILENO);
@@ -180,11 +177,8 @@ void execute_pipeline(t_promp *promp)
                 close(pipes[j][0]);
                 close(pipes[j][1]);
             }
-        
             if (setup_redirections(arr[i]))
-            {
-                exit(1); // Redirection error
-            }
+                exit(1);
 
             if (is_builtin(arr[i]->full_cmd))
             {
