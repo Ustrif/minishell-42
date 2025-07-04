@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 17:41:00 by beinan            #+#    #+#             */
-/*   Updated: 2025/07/04 18:10:19 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/04 20:43:46 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,33 +77,4 @@ char	*get_path(char *cmd, char **env)
 	free_all(allpath);
 	free_all(s_cmd);
 	return (NULL);
-}
-
-void	exec(char *cmd, char **env)
-{
-	char	**s_cmd;
-	char	*path;
-
-	s_cmd = ft_split(cmd, ' ');
-	validate_command(cmd, s_cmd);
-	if (cmd[0] == '/')
-	{
-		if (execve(cmd, s_cmd, env) == -1)
-		{
-			perror("Error");
-			free_all(s_cmd);
-			exit(0);
-		}
-	}
-	path = get_path(s_cmd[0], env);
-	if (path == NULL)
-	{
-		free_all(s_cmd);
-		err("command not found: ", cmd, 127);
-	}
-	if (execve(path, s_cmd, env) == -1)
-	{
-		free_all(s_cmd);
-		err("command not found: ", cmd, 127);
-	}
 }
