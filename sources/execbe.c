@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 06:35:39 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/02 06:35:57 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/04 18:26:09 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ char	**get_fenv(char **e)
 	char	**result;
 	int		i;
 	int		env_num;
-	
+
 	result = NULL;
 	i = 0;
 	env_num = count_words(e);
@@ -39,7 +39,7 @@ t_promp	*get_full_promp(char *s, char **env, int *err_code)
 	t_token	*head;
 	t_list	*minis;
 	t_promp	*p;
-	
+
 	head = get_classified_tokens(s);
 	head = get_unqouted_tokens(head);
 	if (!head)

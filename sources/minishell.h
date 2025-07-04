@@ -159,5 +159,11 @@ int		is_builtin(char **args);
 int		exec_builtin(t_mini *mini, t_env **env_list);
 void	signal_handler(int sig);
 int		err_case(int fd, int fd1);
+void	sig_hand(int signum);
+int		allocate(int count, t_mini ***arr, pid_t **pids, int ***pipes);
+void	one_command(t_promp	*promp, t_mini **arr, pid_t *pids, int **pipes);
+void	spawn_children(t_mini **arr, int **pipes, pid_t *pids, t_promp *promp);
+int		setup_redirections(t_mini *cmd);
+void	execute_cmd(t_mini *cmd, char **envp);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 03:04:26 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/04 18:11:11 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/04 19:45:18 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,226 +14,108 @@
 
 extern int	g_status;
 
-void execute_cmd(t_mini *cmd, char **envp)
+void	fill_cmd_array(t_list *cmds, t_mini **arr, int count)
 {
-	struct stat sb;
+	int	i;
 
-	if (!cmd->full_path && !cmd->full_cmd)
-		exit (0);
-	if (!cmd->full_path)
+	i = 0;
+	while (i < count && cmds)
 	{
-		fprintf(stderr, "minishell: %s: command not found\n", cmd->full_cmd[0]);
-		exit(127);
+		arr[i++] = cmds->content;
+		cmds = cmds->next;
 	}
-	if (stat(cmd->full_path, &sb) == -1)
-	{
-		perror("minishell: stat");
-		exit(127); // ENOENT veya benzeri durumlar için
-	}
-	if (S_ISDIR(sb.st_mode))
-	{
-		fprintf(stderr, "minishell: %s: Is a directory\n", cmd->full_path);
-		exit(126); // Bash bu durumda 126 döner
-	}
-	if (access(cmd->full_path, X_OK) != 0)
-	{
-		perror("minishell: permission denied");
-		exit(126); // Bash bu durumda da 126 döner
-	}
-	execve(cmd->full_path, cmd->full_cmd, envp);
-	perror("minishell: execve");
-	exit(1);
 }
 
-int setup_redirections(t_mini *cmd)
+void	init_pipes(int count, int ***pipes, pid_t **pids, t_mini ***arr)
 {
-    t_redir *r = cmd->redir;
-    int      fd;
+	int	i;
+	int	j;
 
-    while (r)
-    {
-        if (r->type == R_IN)
-            fd = open(r->target, O_RDONLY);
-        else if (r->type == R_HEREDOC)
-            fd = open_heredoc(r->target);
-        else if (r->type == R_OUT)
-            fd = open(r->target, O_CREAT|O_TRUNC|O_WRONLY, 0644);
-        else
-            fd = open(r->target, O_CREAT|O_APPEND|O_WRONLY, 0644);
-        if (fd == -130)
-            return (-130);
-        if (fd < 0)
-        {
-            perror(r->target);
-            return (1);
-        }
-        if (r->type == R_IN || r->type == R_HEREDOC)
-            dup2(fd, STDIN_FILENO);
-        else
-            dup2(fd, STDOUT_FILENO);
-
-        close(fd);
-        r = r->next;
-    }
-    return (0); // success
+	i = 0;
+	while (i < count - 1)
+	{
+		(*pipes)[i] = malloc(sizeof(int) * 2);
+		if (!(*pipes)[i] || pipe((*pipes)[i]) < 0)
+		{
+			perror("pipe");
+			j = 0;
+			while (j <= i)
+			{
+				free((*pipes)[j]);
+				j++;
+			}
+			free(*arr);
+			free(*pids);
+			free(*pipes);
+			exit(1);
+		}
+		i++;
+	}
 }
 
-void    sig_hand(int signum)
+void	close_and_free_pipes(int **pipes, int count)
 {
-    if (signum)
-    {
-        g_status = 130;
-    }
+	int	i;
+
+	if (!pipes)
+		return ;
+	i = 0;
+	while (i < count - 1)
+	{
+		if (pipes[i])
+		{
+			close(pipes[i][0]);
+			close(pipes[i][1]);
+			free(pipes[i]);
+		}
+		i++;
+	}
+	free(pipes);
 }
 
-void execute_pipeline(t_promp *promp)
+void	wait_for_children(pid_t *pids, int count, int *err_code)
 {
-    int     count = 0;
-    t_list *node  = promp->cmds;
-    t_mini **arr;
-    pid_t  *pids;
-    int   **pipes;
-    int      i;
+	int	i;
+	int	wstatus;
 
-    while (node)
-    {
-        count++;
-        node = node->next;
-    }
-    if (count == 0)
-        return;
+	i = 0;
+	while (i < count)
+	{
+		if (waitpid(pids[i], &wstatus, 0) < 0)
+			continue ;
+		if (i == count - 1)
+		{
+			if (WIFEXITED(wstatus))
+				*err_code = WEXITSTATUS(wstatus);
+			else if (WIFSIGNALED(wstatus))
+				*err_code = 128 + WTERMSIG(wstatus);
+		}
+		i++;
+	}
+}
 
-    arr  = malloc(sizeof(t_mini*) * count);
-    pids = malloc(sizeof(pid_t)    * count);
-    pipes = malloc(sizeof(int*) * (count - 1));
-    if (!arr || !pids || (count > 1 && !pipes))
-    {
-        free(arr); free(pids); free(pipes);
-        return;
-    }
+void	execute_pipeline(t_promp *promp)
+{
+	int		count;
+	t_mini	**arr;
+	pid_t	*pids;
+	int		**pipes;
 
-    node = promp->cmds;
-    for (i = 0; i < count; i++)
-    {
-        arr[i] = node->content;
-        node = node->next;
-    }
-
-    if (count == 1 && is_builtin(arr[0]->full_cmd))
-    {
-        int saved_stdin = dup(STDIN_FILENO);
-        int saved_stdout = dup(STDOUT_FILENO);
-        
-        int redir_status = setup_redirections(arr[0]);
-        if (redir_status == -130)
-        {
-            g_status = 130;
-            dup2(saved_stdin, STDIN_FILENO);
-            dup2(saved_stdout, STDOUT_FILENO);
-            close(saved_stdin);
-            close(saved_stdout);
-            free(arr);
-            free(pids);
-            free(pipes);
-            return ;
-        }
-        if (redir_status)
-        {
-            *(promp->err_code) = 1;
-            dup2(saved_stdin, STDIN_FILENO);
-            dup2(saved_stdout, STDOUT_FILENO);
-            close(saved_stdin);
-            close(saved_stdout);
-            free(arr);
-            free(pids);
-            free(pipes);
-            return;
-        }
-        *(promp->err_code) = exec_builtin(arr[0], &promp->tenv);
-        dup2(saved_stdin, STDIN_FILENO);
-        dup2(saved_stdout, STDOUT_FILENO);
-        close(saved_stdin);
-        close(saved_stdout);
-        free(arr);
-        free(pids);
-        free(pipes);
-        return;
-    }
-
-    // Create pipes
-    for (i = 0; i < count - 1; i++)
-    {
-        pipes[i] = malloc(sizeof(int) * 2);
-        if (!pipes[i] || pipe(pipes[i]) < 0)
-        {
-            perror("pipe");
-            for (int j = 0; j <= i; j++) free(pipes[j]);
-            free(arr); free(pids); free(pipes);
-            exit(1);
-        }
-    }
-
-    // Fork children
-    for (i = 0; i < count; i++)
-    {
-        pid_t pid = fork();
-        if (pid < 0)
-        {
-            perror("fork");
-            exit(1);
-        }
-        signal(SIGINT, sig_hand);
-        if (pid == 0)
-        {
-            if (i > 0)
-            {
-                dup2(pipes[i - 1][0], STDIN_FILENO);
-            }
-            if (i < count - 1)
-            {
-                dup2(pipes[i][1], STDOUT_FILENO);
-            }
-            // Close all pipe fds in child
-            for (int j = 0; j < count - 1; j++)
-            {
-                close(pipes[j][0]);
-                close(pipes[j][1]);
-            }
-            if (setup_redirections(arr[i]))
-                exit(1);
-
-            if (is_builtin(arr[i]->full_cmd))
-            {
-                int ret = exec_builtin(arr[i], &promp->tenv);
-                exit(ret);
-            }
-            execute_cmd(arr[i], promp->envp);
-            exit(1); // Should not reach here
-        }
-        pids[i] = pid;
-    }
-
-    // Parent closes all pipe fds
-    for (i = 0; i < count - 1; i++)
-    {
-        close(pipes[i][0]);
-        close(pipes[i][1]);
-        free(pipes[i]);
-    }
-    free(pipes);
-    for (i = 0; i < count; i++)
-    {
-        int wstatus;
-        waitpid(pids[i], &wstatus, 0);
-        if (i == count - 1)
-        {
-            if (WIFEXITED(wstatus))
-                *(promp->err_code) = WEXITSTATUS(wstatus);
-            else if (WIFSIGNALED(wstatus))
-                *(promp->err_code) = 128 + WTERMSIG(wstatus);
-        }
-    }
-
-    free(arr);
-    free(pids);
+	count = ft_lstsize(promp->cmds);
+	if (count == 0)
+		return ;
+	if (allocate(count, &arr, &pids, &pipes) < 0)
+		return ;
+	fill_cmd_array(promp->cmds, arr, count);
+	if (count == 1 && is_builtin(arr[0]->full_cmd))
+	{
+		one_command(promp, arr, pids, pipes);
+		return ;
+	}
+	init_pipes(count, &pipes, &pids, &arr);
+	spawn_children(arr, pipes, pids, promp);
+	close_and_free_pipes(pipes, count);
+	wait_for_children(pids, count, promp->err_code);
+	free(arr);
+	free(pids);
 }
