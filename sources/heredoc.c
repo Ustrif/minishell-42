@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: raydogmu <raydogmu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 09:20:40 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/02 11:27:03 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/04 16:09:08 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,25 @@ static void heredoc_child(const char *delim, int write_fd)
     exit(0);
 }
 
+static void sigint_exit(int signo)
+{
+    if (signo == SIGINT)
+    {
+        write(1, "\n", 1);
+        exit(130);
+    }
+}
+
+static void setup_heredoc_signals(void)
+{
+    struct sigaction sa;
+
+    sa.sa_handler = sigint_exit;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags   = SA_RESETHAND;
+    sigaction(SIGINT, &sa, NULL);
+}
+
 int	open_heredoc(char *delim)
 {
     int   fd[2];
@@ -59,15 +78,16 @@ int	open_heredoc(char *delim)
     }
     if (pid == 0)
     {
+        setup_heredoc_signals();
         close(fd[0]);
         heredoc_child(delim, fd[1]);
     }
     close(fd[1]);
     waitpid(pid, &status, 0);
-    if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT) // tartismaya acik.
+    if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
     {
         close(fd[0]);
-        return -1;
+        return -130;
     }
     return fd[0];
 }
