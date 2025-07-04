@@ -51,18 +51,18 @@ typedef struct s_token
 
 typedef enum e_redir_type
 {
-    R_IN,
-    R_OUT,
-    R_APPEND,
-    R_HEREDOC
-} t_redir_type;
+	R_IN,
+	R_OUT,
+	R_APPEND,
+	R_HEREDOC
+}	t_redir_type;
 
 typedef struct s_redir
 {
-    t_redir_type     type;
-    char            *target;
-    struct s_redir  *next;
-} t_redir;
+	t_redir_type	type;
+	char			*target;
+	struct s_redir	*next;
+}	t_redir;
 
 typedef struct s_mini
 {
@@ -115,7 +115,6 @@ void	del_prompt(t_promp *prompt, void (*del)(void *));
 t_promp	*get_prompt(t_list *cmds, char **env);
 int		get_pwd(void);
 int		get_cd(char **args);
-void	child_process(t_promp *prompt, t_mini *mini, int **pipes, int i, int cmd_count);
 int		ft_echo(char **args);
 int		ft_env(char **args, t_env *env_list);
 t_env	*create_env(const char *env_str);
