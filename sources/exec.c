@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 03:04:26 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/04 16:16:18 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/04 16:50:50 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ int setup_redirections(t_mini *cmd)
             fd = open(r->target, O_CREAT|O_TRUNC|O_WRONLY, 0644);
         else
             fd = open(r->target, O_CREAT|O_APPEND|O_WRONLY, 0644);
+        if (fd == -130)
+            return (-130);
         if (fd < 0)
         {
             perror(r->target);
@@ -113,8 +115,20 @@ void execute_pipeline(t_promp *promp)
     {
         int saved_stdin = dup(STDIN_FILENO);
         int saved_stdout = dup(STDOUT_FILENO);
-
+        
         int redir_status = setup_redirections(arr[0]);
+        if (redir_status == -130)
+        {
+            *(promp->err_code) = 130;
+            dup2(saved_stdin, STDIN_FILENO);
+            dup2(saved_stdout, STDOUT_FILENO);
+            close(saved_stdin);
+            close(saved_stdout);
+            free(arr);
+            free(pids);
+            free(pipes);
+            return ;
+        }
         if (redir_status)
         {
             *(promp->err_code) = 1;

@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 09:20:40 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/04 16:09:08 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/04 16:47:09 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,8 @@ int	open_heredoc(char *delim)
     }
     close(fd[1]);
     waitpid(pid, &status, 0);
-    if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+    if ((WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+        || (WIFEXITED(status) && WEXITSTATUS(status) == 130))
     {
         close(fd[0]);
         return -130;
