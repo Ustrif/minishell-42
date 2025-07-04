@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   built_in.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: raydogmu <raydogmu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 20:22:38 by beinan            #+#    #+#             */
-/*   Updated: 2025/07/02 04:55:23 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/04 17:51:21 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	get_pwd()
+int	get_pwd(void)
 {
 	char	buffer[1024];
 

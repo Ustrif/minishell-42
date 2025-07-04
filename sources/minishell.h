@@ -113,7 +113,7 @@ t_list	*get_minis(t_token *tokens);
 t_mini	*init_mini(void);
 void	del_prompt(t_promp *prompt, void (*del)(void *));
 t_promp	*get_prompt(t_list *cmds, char **env);
-int		get_pwd();
+int		get_pwd(void);
 int		get_cd(char **args);
 void	child_process(t_promp *prompt, t_mini *mini, int **pipes, int i, int cmd_count);
 int		ft_echo(char **args);
