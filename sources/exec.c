@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 03:04:26 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/02 11:26:49 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/04 11:35:27 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,6 @@ void execute_pipeline(t_promp *promp)
     int   **pipes;
     int      i;
 
-    // Count commands
     while (node)
     {
         count++;
@@ -222,4 +221,3 @@ void execute_pipeline(t_promp *promp)
     free(arr);
     free(pids);
 }
-// ...existing code...

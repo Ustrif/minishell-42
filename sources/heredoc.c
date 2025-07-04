@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 09:20:40 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/02 11:27:03 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/04 11:34:21 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,10 +64,5 @@ int	open_heredoc(char *delim)
     }
     close(fd[1]);
     waitpid(pid, &status, 0);
-    if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT) // tartismaya acik.
-    {
-        close(fd[0]);
-        return -1;
-    }
     return fd[0];
 }

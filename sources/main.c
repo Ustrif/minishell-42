@@ -6,13 +6,13 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 12:51:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/02 11:26:25 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/04 11:34:11 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	g_status;
+int	g_status = 0;
 
 void	run(char *s, char **fenv, t_env *tenv)
 {
@@ -23,6 +23,7 @@ void	run(char *s, char **fenv, t_env *tenv)
 	line = get_expanded_data(s, err_code);
 	if (basics(line, &err_code))
 		return ;
+	signal(SIGINT, SIG_IGN);
 	prompt = get_full_promp(line, fenv, &err_code);
 	if (!prompt)
 		return ;
@@ -33,7 +34,7 @@ void	run(char *s, char **fenv, t_env *tenv)
 	del_prompt(prompt, free_mini);
 }
 
-/*void	signal_handler(int sig)
+void	signal_handler(int sig)
 {
 	if (sig == SIGINT)
 	{
@@ -43,7 +44,7 @@ void	run(char *s, char **fenv, t_env *tenv)
 		rl_on_new_line();
 		rl_redisplay();
 	}
-}*/
+}
 
 int	main(int ac, char **argc, char **env)
 {
@@ -61,6 +62,7 @@ int	main(int ac, char **argc, char **env)
 	get_env_value(env_list, NULL);
 	while (1)
 	{
+		signal(SIGINT, signal_handler);
 		line = readline("\001\033[1;92m\002minishell > \001\033[0;39m\002");
 		if (!line)
 			break ;
