@@ -158,5 +158,6 @@ void	ft_redirclear(t_redir **lst);
 int		is_builtin(char **args);
 int		exec_builtin(t_mini *mini, t_env **env_list);
 void	signal_handler(int sig);
+int		err_case(int fd, int fd1);
 
 #endif
