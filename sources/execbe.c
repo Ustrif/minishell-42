@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 06:35:39 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/04 18:26:09 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/07 13:26:09 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ t_promp	*get_full_promp(char *s, char **env, int *err_code)
 	ft_tokenclear(&head);
 	if (!minis)
 	{
-		*err_code = 1;
+		*err_code = 2;
 		return (NULL);
 	}
 	p = get_prompt(minis, env);
