@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 12:51:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/04 18:11:20 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/12 12:23:07 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	run(char *s, char **fenv, t_env *tenv)
 		return ;
 	add_history(s);
 	signal(SIGINT, SIG_IGN);
-	prompt = get_full_promp(line, fenv, &err_code);
+	prompt = get_full_promp(line, fenv, &err_code, tenv);
 	if (!prompt)
 		return ;
 	prompt->tenv = tenv;
@@ -76,7 +76,6 @@ int	main(int ac, char **argc, char **env)
 	env_list = init_env(env);
 	if (!env_list)
 		return (free(fenv), 1);
-	get_real_path(*env, fenv);
 	get_env_value(env_list, NULL);
 	signal(SIGQUIT, SIG_IGN);
 	while (1)

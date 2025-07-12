@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 18:17:59 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/04 20:56:30 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/12 11:28:45 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	execute1(t_mini *cmd)
 	{
 		ft_putstr_fd("minishell: ", 2);
 		ft_putstr_fd(cmd->full_path, 2);
-		perror("");
+		perror(" ");
 		return (127);
 	}
 	if (S_ISDIR(sb.st_mode))

@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 06:35:39 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/07 13:26:09 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/12 11:46:11 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ char	**get_fenv(char **e)
 	return (result);
 }
 
-t_promp	*get_full_promp(char *s, char **env, int *err_code)
+t_promp	*get_full_promp(char *s, char **env, int *err_code, t_env *tenv)
 {
 	t_token	*head;
 	t_list	*minis;
@@ -44,7 +44,7 @@ t_promp	*get_full_promp(char *s, char **env, int *err_code)
 	head = get_unqouted_tokens(head);
 	if (!head)
 		return (*err_code = 1, NULL);
-	minis = get_full_minis(head, env);
+	minis = get_full_minis(head, tenv);
 	ft_tokenclear(&head);
 	if (!minis)
 	{
