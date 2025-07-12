@@ -163,5 +163,7 @@ int		setup_redirections(t_mini *cmd);
 void	execute_cmd(t_mini *cmd, char **envp);
 int		check_builtin(char *s);
 int		calculate_size(const char *colon, const char *p);
+int		append_redir(t_redir **list, t_redir_type type, const char *target);
+void	*cleanup(t_mini *mini, char **full_cmd, t_list **cmds);
 
 #endif
