@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 03:04:26 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/04 19:45:18 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/12 18:50:52 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,11 @@ void	wait_for_children(pid_t *pids, int count, int *err_code)
 			if (WIFEXITED(wstatus))
 				*err_code = WEXITSTATUS(wstatus);
 			else if (WIFSIGNALED(wstatus))
+			{
 				*err_code = 128 + WTERMSIG(wstatus);
+				if (*err_code == 139)
+					write(2, "Segmentation fault (core dumped)\n", 34);
+			}
 		}
 		i++;
 	}
