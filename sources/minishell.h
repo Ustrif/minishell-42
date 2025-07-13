@@ -61,6 +61,7 @@ typedef struct s_redir
 {
 	t_redir_type	type;
 	char			*target;
+	int				heredoc_fd;
 	struct s_redir	*next;
 }	t_redir;
 
@@ -165,5 +166,6 @@ int		check_builtin(char *s);
 int		calculate_size(const char *colon, const char *p);
 int		append_redir(t_redir **list, t_redir_type type, const char *target);
 void	*cleanup(t_mini *mini, char **full_cmd, t_list **cmds);
+void	preprocess_heredocs(t_mini **arr, int count);
 
 #endif

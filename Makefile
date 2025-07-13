@@ -8,7 +8,7 @@ SRC = sources/basics.c sources/built_in.c sources/env.c sources/error.c \
 	sources/syntax.c sources/token2,5.c sources/token2.c sources/token3.c \
 	sources/token4.c sources/token.c sources/type.c sources/unset.c \
 	sources/utils.c sources/utils_re2.c sources/utils_re.c sources/utlis2.c \
-	sources/parser2.c
+	sources/parser2.c sources/exec0.c
 CFLAGS = -Wall -Wextra -Werror
 LIBFT = libft/libft.a
 NAME = minishell

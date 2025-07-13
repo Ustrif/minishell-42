@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 18:22:07 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/04 18:25:49 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/13 10:45:36 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	do_fd_job(t_redir *r)
 	if (r->type == R_IN)
 		fd = open(r->target, O_RDONLY);
 	else if (r->type == R_HEREDOC)
-		fd = open_heredoc(r->target);
+		fd = r->heredoc_fd;
 	else if (r->type == R_OUT)
 		fd = open(r->target, O_CREAT | O_TRUNC | O_WRONLY, 0644);
 	else

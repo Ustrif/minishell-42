@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 03:04:26 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/12 18:50:52 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/13 10:50:32 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ void	execute_pipeline(t_promp *promp)
 	if (allocate(count, &arr, &pids, &pipes) < 0)
 		return ;
 	fill_cmd_array(promp->cmds, arr, count);
+	preprocess_heredocs(arr, count);
 	if (count == 1 && is_builtin(arr[0]->full_cmd))
 	{
 		one_command(promp, arr, pids, pipes);

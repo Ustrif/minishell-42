@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 04:19:40 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/02 04:22:28 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/12 19:11:35 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ t_redir	*ft_redirnnew(char *v, t_redir_type type)
 		return (NULL);
 	result->target = v;
 	result->type = type;
+	result->heredoc_fd = 0;
 	result->next = NULL;
 	return (result);
 }
@@ -47,6 +48,8 @@ void	ft_redirclear(t_redir **lst)
 	while (*lst)
 	{
 		free((*lst)->target);
+		if ((*lst)->heredoc_fd > 0)
+			close((*lst)->heredoc_fd);
 		temp = (*lst)->next;
 		free(*lst);
 		*lst = temp;
