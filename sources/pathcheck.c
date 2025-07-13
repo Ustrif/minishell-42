@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 17:41:00 by beinan            #+#    #+#             */
-/*   Updated: 2025/07/12 14:54:11 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/13 11:50:48 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,18 +66,6 @@ char	*get_path(const char *cmd, const char *p)
 	return (NULL);
 }
 
-char	*way_check(char *s)
-{
-	if (ft_strchr(s, '/'))
-	{
-		if (access(s, F_OK | X_OK) == 0)
-			return (strdup(s));
-		else
-			return (NULL);
-	}
-	return (NULL);
-}
-
 char	*get_real_path(char *s, t_env *env)
 {
 	t_env	*e;
@@ -96,7 +84,7 @@ char	*get_real_path(char *s, t_env *env)
 		return (ft_strdup(s));
 	line = e->value;
 	if (ft_strchr(s, '/'))
-		return (way_check(s));
+		return (strdup(s));
 	result = get_path(s, line);
 	return (result);
 }
