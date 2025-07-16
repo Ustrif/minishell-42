@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 11:01:10 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/12 15:12:27 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/16 11:20:53 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,9 @@ int	append_redir(t_redir **list, t_redir_type type, const char *target)
 	t_redir	*new;
 	t_redir	*cur;
 
-	new = malloc(sizeof(t_redir));
+	new = ft_redirnnew(ft_strdup(target), type);
 	if (!new)
 		return (0);
-	new->type = type;
-	new->target = ft_strdup(target);
-	if (!new->target)
-	{
-		free(new);
-		return (0);
-	}
-	new->next = NULL;
 	if (*list == NULL)
 		*list = new;
 	else
