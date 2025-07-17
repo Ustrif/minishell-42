@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 10:50:51 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/16 17:27:19 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/17 18:49:04 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@ void	preprocess_heredocs(t_mini **arr, int count)
 			if (r->type == R_HEREDOC)
 			{
 				fd = open_heredoc(r->target);
-				g_status = 130;
+				if (fd == -130)
+					g_status = 130;
 				r->heredoc_fd = fd;
 			}
 			r = r->next;

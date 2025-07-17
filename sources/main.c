@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 12:51:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/17 16:54:01 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/17 18:24:51 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,8 @@ int	run(char *s, char **fenv, t_env *tenv)
 	prompt->tenv = tenv;
 	prompt->err_code = &err_code;
 	code = execute_pipeline(prompt);
-
+	if (g_status == 130)
+		for_heredoc(prompt->cmds);
 	free(line);
 	del_prompt(prompt, free_mini);
 	return (code);

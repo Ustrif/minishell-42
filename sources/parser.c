@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 23:05:10 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/16 16:39:23 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/17 17:55:15 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,13 @@ void	free_mini(void *m)
 	mini = m;
 	if (!mini)
 		return ;
+	ft_redirclear(&(mini->redir));
 	if (mini->full_cmd)
 		free_all(mini->full_cmd);
 	free(mini->full_path);
-	ft_redirclear(&mini->redir);
+	if (mini->outfile != STDOUT_FILENO)
+		close(mini->outfile);
+	if (mini->infile != STDIN_FILENO)
+		close(mini->infile);
 	free(mini);
 }

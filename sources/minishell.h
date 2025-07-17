@@ -166,5 +166,6 @@ void	preprocess_heredocs(t_mini **arr, int count);
 int		get_exit_code(int code, t_env *env);
 void	del_env_list(t_env *head);
 int		heredoc_exit(t_mini **arr, pid_t *pids, int **pipes);
+void	for_heredoc(t_list *p);
 
 #endif
