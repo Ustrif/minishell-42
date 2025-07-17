@@ -6,33 +6,11 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 06:35:39 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/12 11:46:11 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/16 16:51:12 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-char	**get_fenv(char **e)
-{
-	char	**result;
-	int		i;
-	int		env_num;
-
-	result = NULL;
-	i = 0;
-	env_num = count_words(e);
-	while (e[i])
-	{
-		result = get_swords(result, e[i]);
-		i++;
-	}
-	if (env_num != count_words(result))
-	{
-		free_all(result);
-		return (NULL);
-	}
-	return (result);
-}
 
 t_promp	*get_full_promp(char *s, char **env, int *err_code, t_env *tenv)
 {
@@ -82,7 +60,7 @@ int	is_builtin(char **args)
 	return (0);
 }
 
-int	exec_builtin(t_mini *mini, t_env **env_list)
+int	exec_builtin(t_mini *mini, t_env **env_list, int e_code)
 {
 	if (!mini->full_cmd || !mini->full_cmd[0])
 		return (1);
@@ -99,6 +77,6 @@ int	exec_builtin(t_mini *mini, t_env **env_list)
 	else if (ft_strcmp(mini->full_cmd[0], "unset") == 0)
 		return (command_unset(mini->full_cmd, env_list));
 	else if (ft_strcmp(mini->full_cmd[0], "exit") == 0)
-		return (ft_exit(mini->full_cmd));
+		return (ft_exit(mini->full_cmd, e_code));
 	return (-1);
 }

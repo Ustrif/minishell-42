@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 16:58:18 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/29 17:21:22 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/16 10:43:14 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,4 +79,18 @@ void	env_add_node(t_env **env_list, t_env *new_node)
 	while (tmp->next)
 		tmp = tmp->next;
 	tmp->next = new_node;
+}
+
+void	del_env_list(t_env *head)
+{
+	t_env	*temp;
+
+	while (head)
+	{
+		temp = head->next;
+		free(head->key);
+		free(head->value);
+		free(head);
+		head = temp;
+	}
 }

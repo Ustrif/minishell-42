@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 03:04:26 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/13 10:50:32 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/16 17:44:52 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ void	wait_for_children(pid_t *pids, int count, int *err_code)
 	}
 }
 
-void	execute_pipeline(t_promp *promp)
+int	execute_pipeline(t_promp *promp)
 {
 	int		count;
 	t_mini	**arr;
@@ -107,20 +107,20 @@ void	execute_pipeline(t_promp *promp)
 
 	count = ft_lstsize(promp->cmds);
 	if (count == 0)
-		return ;
+		return (0);
 	if (allocate(count, &arr, &pids, &pipes) < 0)
-		return ;
+		return (0);
 	fill_cmd_array(promp->cmds, arr, count);
 	preprocess_heredocs(arr, count);
+	if (g_status == 130)
+		return (heredoc_exit(arr, pids, pipes));
 	if (count == 1 && is_builtin(arr[0]->full_cmd))
-	{
-		one_command(promp, arr, pids, pipes);
-		return ;
-	}
+		return (one_command(promp, arr, pids, pipes));
 	init_pipes(count, &pipes, &pids, &arr);
 	spawn_children(arr, pipes, pids, promp);
 	close_and_free_pipes(pipes, count);
 	wait_for_children(pids, count, promp->err_code);
 	free(arr);
 	free(pids);
+	return (0);
 }

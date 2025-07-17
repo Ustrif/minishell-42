@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 19:01:15 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/04 19:45:42 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/16 16:54:00 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	do_files(int sin, int sout)
 	close(sout);
 }
 
-void	one_command(t_promp	*promp, t_mini **arr, pid_t *pids, int **pipes)
+int	one_command(t_promp	*promp, t_mini **arr, pid_t *pids, int **pipes)
 {
 	int	saved_stdin;
 	int	saved_stdout;
@@ -58,17 +58,17 @@ void	one_command(t_promp	*promp, t_mini **arr, pid_t *pids, int **pipes)
 		g_status = 130;
 		do_files(saved_stdin, saved_stdout);
 		free_three(arr, pids, pipes);
-		return ;
+		return (0);
 	}
 	if (redir_status)
 	{
 		*(promp->err_code) = 1;
 		do_files(saved_stdin, saved_stdout);
 		free_three(arr, pids, pipes);
-		return ;
+		return (0);
 	}
-	*(promp->err_code) = exec_builtin(arr[0], &promp->tenv);
+	*(promp->err_code) = exec_builtin(arr[0], &promp->tenv, *promp->err_code);
 	do_files(saved_stdin, saved_stdout);
 	free_three(arr, pids, pipes);
-	return ;
+	return (*(promp->err_code));
 }

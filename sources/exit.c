@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: beinan <beinan@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 15:02:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/04/30 21:07:08 by beinan           ###   ########.fr       */
+/*   Updated: 2025/07/16 16:56:30 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,19 +29,18 @@ int	ft_is_numeric(const char *str)
 	return (1);
 }
 
-int	ft_exit(char **args)
+int	ft_exit(char **args, int e_code)
 {
 	int	exit_status;
 
-	write(1, "exit\n", 5);
 	if (!args[1])
-		exit(0);
+		return (-500 + e_code);
 	if (!ft_is_numeric(args[1]))
 	{
 		write(2, "minishell: exit: ", 17);
 		write(2, args[1], ft_strlen(args[1]));
 		write(2, ": numeric argument required\n", 28);
-		exit(2);
+		return (-2);
 	}
 	if (args[2])
 	{
@@ -51,5 +50,5 @@ int	ft_exit(char **args)
 	exit_status = ft_atoi(args[1]) % 256;
 	if (exit_status < 0)
 		exit_status += 256;
-	exit(exit_status);
+	return (-exit_status);
 }

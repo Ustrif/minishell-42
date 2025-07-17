@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 19:25:14 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/04 19:38:23 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/16 16:54:03 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	run_child_command(t_mini *cmd, t_promp *promp)
 		exit(1);
 	if (is_builtin(cmd->full_cmd))
 	{
-		ret = exec_builtin(cmd, &promp->tenv);
+		ret = exec_builtin(cmd, &promp->tenv, *promp->err_code);
 		exit(ret);
 	}
 	execute_cmd(cmd, promp->envp);

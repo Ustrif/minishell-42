@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 12:51:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/12 12:23:07 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/17 16:54:01 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,32 +24,40 @@ void	set_datas(int *e)
 	}
 }
 
-void	run(char *s, char **fenv, t_env *tenv)
+int	run(char *s, char **fenv, t_env *tenv)
 {
 	t_promp			*prompt;
 	static int		err_code = 0;
 	char			*line;
-	struct termios	saved;
+	int				code;
 
 	set_datas(&err_code);
-	tcgetattr(STDIN_FILENO, &saved);
 	line = get_expanded_data(s, err_code);
 	if (basics(line, &err_code))
-		return ;
+		return (0);
 	add_history(s);
 	signal(SIGINT, SIG_IGN);
 	prompt = get_full_promp(line, fenv, &err_code, tenv);
 	if (!prompt)
-		return ;
+		return (print_error("prompt err", 1));
 	prompt->tenv = tenv;
 	prompt->err_code = &err_code;
-	execute_pipeline(prompt);
-	if (g_status == 130 && (err_code == 0 || err_code == 130)
-		&& !is_builtin(((t_mini*)prompt->cmds->content)->full_cmd))
-		write(1, "\n", 1);
+	code = execute_pipeline(prompt);
+
 	free(line);
 	del_prompt(prompt, free_mini);
+	return (code);
+}
+
+int	pre_run(char *s, char **env, t_env *tenv)
+{
+	struct termios	saved;
+	int				code;
+
+	tcgetattr(STDIN_FILENO, &saved);
+	code = run(s, env, tenv);
 	tcsetattr(STDIN_FILENO, TCSANOW, &saved);
+	return (code);
 }
 
 void	signal_handler(int sig)
@@ -66,16 +74,16 @@ void	signal_handler(int sig)
 
 int	main(int ac, char **argc, char **env)
 {
-	char	**fenv;
 	char	*line;
 	t_env	*env_list;
+	int		code;
 
-	fenv = get_fenv(env);
-	if (!ac || !argc || !fenv)
-		return (print_error("minishell: fenv memory alloc err", 1));
+	if (!ac || !argc)
+		return (print_error("argc error", 1));
+	code = 0;
 	env_list = init_env(env);
 	if (!env_list)
-		return (free(fenv), 1);
+		return (print_error("env_list error", 1));
 	get_env_value(env_list, NULL);
 	signal(SIGQUIT, SIG_IGN);
 	while (1)
@@ -84,10 +92,11 @@ int	main(int ac, char **argc, char **env)
 		line = readline("\001\033[1;92m\002minishell > \001\033[0;39m\002");
 		if (!line)
 			break ;
-		run(line, fenv, env_list);
+		code = pre_run(line, env, env_list);
 		free(line);
+		if (code < 0)
+			break ;
 	}
 	rl_clear_history();
-	free_all(fenv);
-	return (0);
+	return (get_exit_code(code, env_list));
 }

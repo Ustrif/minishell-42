@@ -1,40 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec0.c                                            :+:      :+:    :+:   */
+/*   exit1.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/13 10:50:51 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/16 17:27:19 by raydogmu         ###   ########.fr       */
+/*   Created: 2025/07/16 10:23:59 by raydogmu          #+#    #+#             */
+/*   Updated: 2025/07/16 17:44:29 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-extern int	g_status;
-
-void	preprocess_heredocs(t_mini **arr, int count)
+int	get_exit_code(int code, t_env *env)
 {
-	int		fd;
-	int		i;
-	t_redir	*r;
+	del_env_list(env);
+	write(1, "exit\n", 5);
+	if (code < -256)
+		return (code + 500);
+	else
+		return (-code);
+}
 
-	i = 0;
-	fd = 0;
-	while (i < count)
-	{
-		r = arr[i]->redir;
-		while (r)
-		{
-			if (r->type == R_HEREDOC)
-			{
-				fd = open_heredoc(r->target);
-				g_status = 130;
-				r->heredoc_fd = fd;
-			}
-			r = r->next;
-		}
-		i++;
-	}
+int	heredoc_exit(t_mini **arr, pid_t *pids, int **pipes)
+{
+	free(arr);
+	free(pids);
+	free(pipes);
+	return (0);
 }
