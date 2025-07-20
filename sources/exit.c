@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 15:02:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/16 16:56:30 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/20 08:56:10 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,5 +50,7 @@ int	ft_exit(char **args, int e_code)
 	exit_status = ft_atoi(args[1]) % 256;
 	if (exit_status < 0)
 		exit_status += 256;
+	if (exit_status == 0)
+		return (-500);
 	return (-exit_status);
 }
