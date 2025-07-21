@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 10:55:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/07 13:43:42 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/21 10:05:28 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,14 @@ int	only_quote(char *s)
 	return (0);
 }
 
+int	is_dot(char *s)
+{
+	if ((ft_strlen(s) == 1 && s[0] == '.' )
+		|| (ft_strlen(s) >= 2 && s[0] == '.' && s[1] == ' '))
+		return (1);
+	return (0);
+}
+
 int	basics(char *s, int *err_code)
 {
 	if (is_quotes_closed(s))
@@ -50,6 +58,11 @@ int	basics(char *s, int *err_code)
 	{
 		*err_code = 0;
 		return (1);
+	}
+	if (is_dot(s))
+	{
+		*err_code = 2;
+		return (print_error(". does not expand to source.", 1));
 	}
 	if (only_quote(s))
 	{

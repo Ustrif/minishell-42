@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 12:51:32 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/17 18:24:51 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/21 11:45:08 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,12 @@ int	run(char *s, char **fenv, t_env *tenv)
 	set_datas(&err_code);
 	line = get_expanded_data(s, err_code);
 	if (basics(line, &err_code))
-		return (0);
+		return (free_return(line, 0));
 	add_history(s);
 	signal(SIGINT, SIG_IGN);
 	prompt = get_full_promp(line, fenv, &err_code, tenv);
 	if (!prompt)
-		return (print_error("prompt err", 1));
+		return (free_return(line, 1));
 	prompt->tenv = tenv;
 	prompt->err_code = &err_code;
 	code = execute_pipeline(prompt);
@@ -55,6 +55,8 @@ int	pre_run(char *s, char **env, t_env *tenv)
 	struct termios	saved;
 	int				code;
 
+	if (!s)
+		print_error("memory error", -1);
 	tcgetattr(STDIN_FILENO, &saved);
 	code = run(s, env, tenv);
 	tcsetattr(STDIN_FILENO, TCSANOW, &saved);
@@ -92,7 +94,7 @@ int	main(int ac, char **argc, char **env)
 		signal(SIGINT, signal_handler);
 		line = readline("\001\033[1;92m\002minishell > \001\033[0;39m\002");
 		if (!line)
-			break ;
+			line = ft_strdup("exit");
 		code = pre_run(line, env, env_list);
 		free(line);
 		if (code < 0)

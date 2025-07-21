@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 09:46:25 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/06/30 09:37:20 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/21 11:19:05 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,12 @@ int	status_num(const char *s)
 	{
 		if (!open && (s[i] == '"' || s[i] == '\''))
 			open = s[i++];
-		else if (open && s[i++] == open)
+		else if (open && s[i] == open)
+		{
 			open = 0;
-		else if (s[i] == '$' && open != '\'' && s[i + 1] == '?')
+			i++;
+		}
+		else if (s[i] == '$' && open != '\'' && s[i + 1] && s[i + 1] == '?')
 		{
 			count++;
 			i += 2;

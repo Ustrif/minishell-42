@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 08:30:39 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/17 18:54:53 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/21 11:32:54 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,4 +86,10 @@ void	for_heredoc(t_list *p)
 	}
 	if (!i)
 		write(1, "\n", 1);
+}
+
+int	free_return(char *s, int i)
+{
+	free(s);
+	return (i);
 }
