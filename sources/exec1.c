@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 18:17:59 by raydogmu          #+#    #+#             */
-/*   Updated: 2025/07/12 11:28:45 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/23 14:10:28 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,9 @@ void	execute_cmd(t_mini *cmd, char **envp)
 		exit(err);
 	if (access(cmd->full_path, X_OK) != 0)
 	{
-		perror("minishell: permission denied");
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(cmd->full_cmd[0], 2);
+		ft_putendl_fd(": permission denied", 2);
 		exit(126);
 	}
 	execve(cmd->full_path, cmd->full_cmd, envp);
