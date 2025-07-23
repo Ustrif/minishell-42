@@ -6,7 +6,7 @@
 /*   By: raydogmu <raydogmu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 20:22:38 by beinan            #+#    #+#             */
-/*   Updated: 2025/07/04 18:10:59 by raydogmu         ###   ########.fr       */
+/*   Updated: 2025/07/23 12:58:36 by raydogmu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	get_cd(char **args)
 	}
 	if (!args[1])
 	{
-		home = getenv("HOME");
+		home = get_env_value(NULL, "HOME");
 		if (!home)
 		{
 			write(2, "cd: HOME not set\n", 17);
