@@ -17,3 +17,12 @@ _make_
 to run;
 
 _./minishell_
+
+to analyse with valgrind;
+
+_./run.sh_
+
+**Conclusion**
+
+This is full version of program.
+No update again.
